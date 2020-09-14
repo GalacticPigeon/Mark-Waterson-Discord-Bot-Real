@@ -1,4 +1,4 @@
-git+https://github.com/Rapptz/discord.py@rewrite
+discord
 aiothttp
 itertools
 dnspython==1.16.0
