@@ -120,7 +120,7 @@ def hasNumbers(inputString):
 client = commands.Bot(command_prefix = '_')
 client.remove_command('help')
 status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently facing east',])
-os.chdir(r'D:\Documents\Discord Bot')
+#os.chdir(r'D:\Documents\Discord Bot')
 
 #Tasks
 @tasks.loop(seconds = 600)
