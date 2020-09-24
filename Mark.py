@@ -238,7 +238,7 @@ async def on_message(message):
     if 'hasno' in new_message and 'mark' in new_message or 'waterson' in new_message and 'hasno' in new_message:
         await channel.send('Yes I do.')
 
-    if 'naturalselection' in new_message():
+    if 'naturalselection' in new_message:
         await channel.send("Natural selection is the process whereby organisms better adapted to their environment tend to survive and produce more offspring")
 
 
