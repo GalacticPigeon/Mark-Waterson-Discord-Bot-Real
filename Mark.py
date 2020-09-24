@@ -120,7 +120,7 @@ def hasNumbers(inputString):
 client = commands.Bot(command_prefix = '_')
 client.remove_command('help')
 status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently facing east',])
-#os.chdir(r'D:\Documents\Discord Bot')
+# os.chdir(r'D:\Documents\Discord Bot')
 
 #Tasks
 @tasks.loop(seconds = 600)
@@ -257,7 +257,7 @@ async def on_message(message):
         await channel.send("8bol")
         
     if 'whats' in new_message and 'ping' in new_message:
-        await channel.send('Nigga')
+        await channel.send('Bruh')
 
     # if 'mark' in new_message:
     #     await channel.send("Markalicous")
@@ -265,7 +265,7 @@ async def on_message(message):
     if 'why' in new_message:
         randNum = random.randint(0,1);
         if (randNum == 1):
-            await channel.send('halal')
+            await channel.send('haram')
 
         # role = discord.utils.get(message.author.roles, name = 'Peasants')
         # currentRole = get(message.author.roles, name='member')
@@ -289,16 +289,18 @@ async def add_points(users, user, pts, award, channel):
 
     if award and pts >= 0:
         embed = discord.Embed(
-            color = discord.Color.red()
+            color = discord.Color.green()
         )
-        embed.add_field(name='haram', value=f'you have gained {pts} point(s)', inline = False)
+        embed.set_author(name='halal')
+        embed.add_field(value=f'you have gained {pts} point(s)', inline = False)
         await channel.send(embed=embed)
     
     if award and pts < 0:
         embed = discord.Embed(
-            color = discord.Color.green()
+            color = discord.Color.red()
         )
-        embed.add_field(name='halal', value=f'you have lost {abs(pts)} point(s)', inline = False)
+        embed.set_author(name='haram')
+        embed.add_field(value=f'you have lost {abs(pts)} point(s)', inline = False)
         await channel.send(embed=embed)
 
 #Helper fucntion to determine whether or not to add points
@@ -565,21 +567,24 @@ async def points(ctx, member: discord.Member = None):
 
     if(users[str(user)]['points'] > 0):
         embed = discord.Embed(
-        color = discord.Color.red()
+        color = discord.Color.green()
         )
-        embed.add_field(name=author, value = f"You have {users[str(user)]['points']} points", inline=False)
+        embed.set_author(name=author)
+        embed.add_field(value = f"You have {users[str(user)]['points']} points", inline=False)
         await ctx.send(embed=embed)
     elif(users[str(user)]['points'] == 0):
         embed = discord.Embed(
             color = discord.Color.light_grey()
         )
-        embed.add_field(name=author, value = f"You have {users[str(user)]['points']} points", inline=False)
+        embed.set_author(name=author)
+        embed.add_field(value = f"You have {users[str(user)]['points']} points", inline=False)
         await ctx.send(embed=embed)
     else:
         embed = discord.Embed(
-        color = discord.Color.green()
+        color = discord.Color.red()
         )
-        embed.add_field(name=author, value = f"You have {users[str(user)]['points']} points", inline=False)
+        embed.set_author(name=author)
+        embed.add_field(value = f"You have {users[str(user)]['points']} points", inline=False)
         await ctx.send(embed=embed)
 
 
