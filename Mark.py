@@ -289,14 +289,14 @@ async def add_points(users, user, pts, award, channel):
 
     if award and pts >= 0:
         embed = discord.Embed(
-            color = discord.Color.green()
+            color = discord.Color.red()
         )
         embed.add_field(name='haram', value=f'you have gained {pts} point(s)', inline = False)
         await channel.send(embed=embed)
     
     if award and pts < 0:
         embed = discord.Embed(
-            color = discord.Color.red()
+            color = discord.Color.green()
         )
         embed.add_field(name='halal', value=f'you have lost {abs(pts)} point(s)', inline = False)
         await channel.send(embed=embed)
@@ -565,7 +565,7 @@ async def points(ctx, member: discord.Member = None):
 
     if(users[str(user)]['points'] > 0):
         embed = discord.Embed(
-        color = discord.Color.green()
+        color = discord.Color.red()
         )
         embed.add_field(name=author, value = f"You have {users[str(user)]['points']} points", inline=False)
         await ctx.send(embed=embed)
@@ -577,7 +577,7 @@ async def points(ctx, member: discord.Member = None):
         await ctx.send(embed=embed)
     else:
         embed = discord.Embed(
-        color = discord.Color.red()
+        color = discord.Color.green()
         )
         embed.add_field(name=author, value = f"You have {users[str(user)]['points']} points", inline=False)
         await ctx.send(embed=embed)
