@@ -235,11 +235,20 @@ async def on_message(message):
     if isBadWords and 'waterboy' in new_message:
         await channel.send('You think Adam Sandler is bad?')
     
-    if 'has no' in new_message and 'mark' in new_message or 'waterson' in new_message and 'has no' in new_message:
+    if 'hasno' in new_message and 'mark' in new_message or 'waterson' in new_message and 'hasno' in new_message:
         await channel.send('Yes I do.')
 
-    # if 'what' in new_message:
-    #     await channel.send('What')
+    if 'naturalselection' in new_message():
+        await channel.send("Natural selection is the process whereby organisms better adapted to their environment tend to survive and produce more offspring")
+
+
+    if 'whatsthedeal' in new_message:
+        pts = await remove_points()
+        with open('users.json', 'r') as f:
+            users = json.load(f)
+        await add_points(users, message.author, pts, True, message.channel)
+        with open('users.json', 'w') as f:
+            json.dump(users, f)
     
     #if message.author.display_name == "Robert Downey Jr.":
         # await channel.send('I am doing stuff')
@@ -254,7 +263,9 @@ async def on_message(message):
     #     await channel.send("Markalicous")
 
     if 'why' in new_message:
-        await channel.send('haram')
+        randNum = random.randint(0,1);
+        if (randNum == 1):
+            await channel.send('halal')
 
         # role = discord.utils.get(message.author.roles, name = 'Peasants')
         # currentRole = get(message.author.roles, name='member')
@@ -280,14 +291,14 @@ async def add_points(users, user, pts, award, channel):
         embed = discord.Embed(
             color = discord.Color.green()
         )
-        embed.add_field(name='halal', value=f'you have gained {pts} point(s)', inline = False)
+        embed.add_field(name='haram', value=f'you have gained {pts} point(s)', inline = False)
         await channel.send(embed=embed)
     
     if award and pts < 0:
         embed = discord.Embed(
             color = discord.Color.red()
         )
-        embed.add_field(name='haram', value=f'you have lost {abs(pts)} point(s)', inline = False)
+        embed.add_field(name='halal', value=f'you have lost {abs(pts)} point(s)', inline = False)
         await channel.send(embed=embed)
 
 #Helper fucntion to determine whether or not to add points
@@ -298,6 +309,17 @@ async def reward_points():
         return True
     else:
         return False
+
+async def remove_points():
+    pts = random.randint(-20,-1)
+    return pts
+    # users[str(user.id)]['points'] += pts
+    # embed = discord.Embed(
+    #         color = discord.Color.red()
+    #     )
+    # embed.add_field(name='haram', value=f'you have lost {abs(pts)} point(s)', inline = False)
+    # await channel.send(embed=embed)
+
 
 # Helper function to display number of points a user has
 # async def disp_points(user):
