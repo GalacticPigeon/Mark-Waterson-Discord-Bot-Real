@@ -120,6 +120,7 @@ def hasNumbers(inputString):
 client = commands.Bot(command_prefix = '_')
 client.remove_command('help')
 status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently facing east',])
+#FIXME: COMMENT OUT
 # os.chdir(r'D:\Documents\Discord Bot')
 
 #Tasks
@@ -135,7 +136,7 @@ async def change_status():
 def remove_symbol(message):
      #list of chars to remove
      badCharsList = [';', ' ', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
-    '<', '>', '?', "\ ", '/', '-', '+', '=', '^', '$', '@', '&', '%' ',', '`']
+    '<', '>', '?', "\ ", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’"]
      new_message = message #Will store new message
 
      for symbol in badCharsList:
@@ -241,8 +242,7 @@ async def on_message(message):
     if 'naturalselection' in new_message:
         await channel.send("Natural selection is the process whereby organisms better adapted to their environment tend to survive and produce more offspring")
 
-
-    if 'whatsthedeal' in new_message:
+    if 'whatsthedeal' in new_message or "whats the deal" in new_message:
         pts = await remove_points()
         with open('users.json', 'r') as f:
             users = json.load(f)
@@ -278,7 +278,6 @@ async def on_message(message):
 #Update data helper function updates user data on message
 async def update_data(users, user):
     if not str(user.id) in users:
-        print('UPDATED INFO')
         users[str(user.id)] = {}
         users[str(user.id)]['points'] = 0
 
@@ -411,7 +410,6 @@ async def john(ctx):
     await ctx.send('https://i.imgur.com/TQZ7cAY.jpg')
 
 #WIP will make user say whatever text is entered
-#TO DO: Delete last message from user
 @client.command()
 async def usersay(ctx, member: discord.Member = None, *, message):
     isBadWords = False #Checks if bad words in user mesasge
@@ -537,13 +535,13 @@ async def usersay(ctx, member: discord.Member = None, *, message):
         if word in messageStrLower:
                 isBadWords = True
     
-
-    if isBadWords and str(userName) != myName or str(userName) != leshenName:
-        if str(mentioned) == mark or myName or leshenName:
+    if isBadWords and str(userName) != myName:
+        if str(mentioned) == mark or myName:
             avatar = authorAvatar
             memberName = author
 
-    
+    if "@everyone" in messageStrLower and str(userName) != myName:
+        message = "no"
             
 
     #Webhook
@@ -553,16 +551,10 @@ async def usersay(ctx, member: discord.Member = None, *, message):
     #     await webhook.send(message, username = memberName, avatar_url = avatar)
 
     #Webhook V2
-    if "@everyone" in messageStrLower and str(userName) != myName or leshenName:
-        Webhook.avatar_url = avatar
-        webhook = await channel.create_webhook(name = memberName)
-        await webhook.send("no", username = memberName, avatar_url = avatar)
-        await webhook.delete()
-    else:
-        Webhook.avatar_url = avatar
-        webhook = await channel.create_webhook(name = memberName)
-        await webhook.send(message, username = memberName, avatar_url = avatar)
-        await webhook.delete()
+    Webhook.avatar_url = avatar
+    webhook = await channel.create_webhook(name = memberName)
+    await webhook.send(message, username = memberName, avatar_url = avatar)
+    await webhook.delete()
 
 # Points command displays user's points
 @client.command()
@@ -572,6 +564,8 @@ async def points(ctx, member: discord.Member = None):
     author = ctx.author.display_name
     with open('users.json', 'r') as f:
         users = json.load(f)
+    # await ctx.send("There is currently no way to check your points until I, Mark Waterson, deem it so")
+    # await ctx.send(f"You have {users[str(user)]['points']} points")
 
     if(users[str(user)]['points'] > 0):
         embed = discord.Embed(
