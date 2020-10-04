@@ -543,9 +543,8 @@ async def usersay(ctx, member: discord.Member = None, *, message):
             avatar = authorAvatar
             memberName = author
 
-    if "@everyone" in messageStrLower and str(userName) != myName or leshenName:
-        if str(mentioned) != mark or myName or leshenName:
-            message = "no"
+    
+            
 
     #Webhook
     # async with aiohttp.ClientSession() as session:
@@ -554,10 +553,16 @@ async def usersay(ctx, member: discord.Member = None, *, message):
     #     await webhook.send(message, username = memberName, avatar_url = avatar)
 
     #Webhook V2
-    Webhook.avatar_url = avatar
-    webhook = await channel.create_webhook(name = memberName)
-    await webhook.send(message, username = memberName, avatar_url = avatar)
-    await webhook.delete()
+    if "@everyone" in messageStrLower and str(userName) != myName or leshenName:
+        Webhook.avatar_url = avatar
+        webhook = await channel.create_webhook(name = memberName)
+        await webhook.send("no", username = memberName, avatar_url = avatar)
+        await webhook.delete()
+    else:
+        Webhook.avatar_url = avatar
+        webhook = await channel.create_webhook(name = memberName)
+        await webhook.send(message, username = memberName, avatar_url = avatar)
+        await webhook.delete()
 
 # Points command displays user's points
 @client.command()
@@ -567,8 +572,6 @@ async def points(ctx, member: discord.Member = None):
     author = ctx.author.display_name
     with open('users.json', 'r') as f:
         users = json.load(f)
-    # await ctx.send("There is currently no way to check your points until I, Mark Waterson, deem it so")
-    # await ctx.send(f"You have {users[str(user)]['points']} points")
 
     if(users[str(user)]['points'] > 0):
         embed = discord.Embed(
