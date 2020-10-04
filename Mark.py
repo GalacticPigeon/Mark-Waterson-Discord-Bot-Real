@@ -190,7 +190,7 @@ async def on_message(message):
     channel = message.channel #current channel
     isBadWords = False #boolean for bad words
     badCharsList = [';', ' ', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
-    '<', '>', '?', "\ ", '/', '-', '+', '=', '^', '$', '@', '&', '%' ',', '`']
+    '<', '>', '?', "\ ", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`']
 
     
     global badWordsList1
@@ -265,7 +265,7 @@ async def on_message(message):
     if 'why' in new_message:
         randNum = random.randint(0,1);
         if (randNum == 1):
-            await channel.send('halal')
+            await channel.send('haram')
 
         # role = discord.utils.get(message.author.roles, name = 'Peasants')
         # currentRole = get(message.author.roles, name='member')
@@ -418,6 +418,7 @@ async def usersay(ctx, member: discord.Member = None, *, message):
     channel = ctx.message.channel #channel variable
     Id = ctx.author.id #gets user id. Kinda useless
     myName = 'Galactic_Pigeon#2306' #The name of me
+    leshenName = 'leshen_gang#7757' #The name of chip
     MEE6 = 'MEE6#4876' # The name of god
     mark = 'Mark Waterson#5554' # The name of the bot
     author = ctx.author.display_name #display the name of the message author
@@ -537,10 +538,13 @@ async def usersay(ctx, member: discord.Member = None, *, message):
                 isBadWords = True
     
 
-    if isBadWords and str(userName) != myName :
-        if str(mentioned) == mark or myName:
+    if isBadWords and str(userName) != myName or str(userName) != leshenName:
+        if str(mentioned) == mark or myName or leshenName:
             avatar = authorAvatar
             memberName = author
+
+    if "@everyone" in messageStrLower and str(userName) != myName or leshenName:
+        message = "no"
 
     #Webhook
     # async with aiohttp.ClientSession() as session:
@@ -586,6 +590,7 @@ async def points(ctx, member: discord.Member = None):
         embed.set_author(name=author)
         embed.add_field(name='\u200b', value = f"You have {users[str(user)]['points']} points", inline=False)
         await ctx.send(embed=embed)
+
 
 
 
