@@ -544,7 +544,8 @@ async def usersay(ctx, member: discord.Member = None, *, message):
             memberName = author
 
     if "@everyone" in messageStrLower and str(userName) != myName or leshenName:
-        message = "no"
+        if str(mentioned) != mark or myName or leshenName:
+            message = "no"
 
     #Webhook
     # async with aiohttp.ClientSession() as session:
