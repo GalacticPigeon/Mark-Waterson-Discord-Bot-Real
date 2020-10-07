@@ -10,6 +10,9 @@ from discord import member
 from discord import Webhook, AsyncWebhookAdapter
 from discord.utils import get
 from itertools import cycle
+from itertools import product
+# from nltk.corpus import wordnet as wn
+# import enchant
 
 #TO DO: GO THROUGH USER MESSAGE HISTORY TO CHECK IF THEY INSULTED MARK WHILE BOT WAS OFFLINE
 
@@ -136,14 +139,16 @@ async def change_status():
 def remove_symbol(message):
      #list of chars to remove
      badCharsList = [';', ' ', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
-    '<', '>', '?', "\ ", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’"]
-     new_message = message #Will store new message
+    '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’"]
 
+    #  for symbol in badCharsList:
+    #     if symbol in message:
+    #         new_message = message.replace(symbol, '')
      for symbol in badCharsList:
          if symbol in message:
-            new_message = message.replace(symbol, '')
+             message = message.replace(symbol,"")
     
-     return new_message
+     return message
 
 
 # Events
@@ -183,23 +188,27 @@ async def on_member_update(before, after):
             else:
                 await after.edit(nick = "lol u thought")
 
-
+#Helper function to turn char array to string
+def convert(s):
+    new = ""
+    for x in s:
+        new += x
+    return new
 
 # On Message Event
 @client.event
 async def on_message(message):
     channel = message.channel #current channel
     isBadWords = False #boolean for bad words
-    badCharsList = [';', ' ', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
-    '<', '>', '?', "\ ", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`']
+    # d = enchant.Dict("en_US")
+
 
     
     global badWordsList1
     global count
     message_lower = message.content.lower()
-    new_message = message_lower
 
-    new_message = remove_symbol(new_message)
+    new_message = remove_symbol(message_lower)
 
     string_value = ",".join(badWordsList1)
     badWords = string_value.split(",")
@@ -209,6 +218,11 @@ async def on_message(message):
     for word in userSay:
         if word in message.content.lower():
             await message.channel.purge(limit=1)
+    
+    #FIXME: COMPLETE OR DELETE
+
+    
+    #END FIXME
     
     points = random.randint(-10,20)
     awardPoints = await reward_points()
@@ -304,7 +318,7 @@ async def add_points(users, user, pts, award, channel):
 
 #Helper fucntion to determine whether or not to add points
 async def reward_points():
-    num = random.randint(0,51)
+    num = random.randint(0,100)
 
     if num == 1:
         return True
