@@ -263,7 +263,7 @@ async def on_message(message):
     #     await channel.send("Markalicous")
 
     if 'why' in new_message:
-        randNum = random.randint(0,1);
+        randNum = random.randint(0,5);
         if (randNum == 1):
             await channel.send('haram')
 
