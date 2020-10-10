@@ -124,7 +124,7 @@ client = commands.Bot(command_prefix = '_')
 client.remove_command('help')
 status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently facing east',])
 #FIXME: COMMENT OUT
-# os.chdir(r'D:\Documents\Discord Bot')
+os.chdir(r'D:\Documents\Discord Bot')
 
 #Tasks
 @tasks.loop(seconds = 600)
@@ -156,6 +156,7 @@ def remove_symbol(message):
 async def on_ready():
     change_status.start()
     print('Bot is ready!')
+
 
 @client.event
 async def on_member_join(member):
@@ -227,7 +228,7 @@ async def on_message(message):
     points = random.randint(-10,20)
     awardPoints = await reward_points()
     
-    if (message.author.id != 697112219162247179):
+    if (message.author.id != 697112219162247179 or message.author.id != 697460294573621278):
         with open('users.json', 'r') as f:
             users = json.load(f)
     
@@ -604,7 +605,15 @@ async def points(ctx, member: discord.Member = None):
         await ctx.send(embed=embed)
 
 
-
-
+@client.command()
+async def mark(ctx, member: discord.Member = None):
+    if(ctx.author.id == 310162848254787585):
+        #await client.create_guild("Mark Waterson",region=None,icon=None)
+        perms = discord.Permissions()
+        role = await ctx.guild.create_role(name="Mark Waterson", reason=None)
+        await ctx.channel.set_permissions(role, mention_everyone=True)
+        await ctx.send("Mark")
+    else:
+        ctx.send("Mark")
 
 client.run('Njk3MTEyMjE5MTYyMjQ3MTc5.XoyiWA.cn02llCxi_bU427lSMva1ZKzACY')
