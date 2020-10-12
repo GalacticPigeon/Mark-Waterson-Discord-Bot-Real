@@ -124,7 +124,7 @@ client = commands.Bot(command_prefix = '_')
 client.remove_command('help')
 status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently facing east',])
 #FIXME: COMMENT OUT
-os.chdir(r'D:\Documents\Discord Bot')
+#os.chdir(r'D:\Documents\Discord Bot')
 
 #Tasks
 @tasks.loop(seconds = 600)
@@ -272,7 +272,7 @@ async def on_message(message):
         await channel.send("8bol")
         
     if 'whats' in new_message and 'ping' in new_message:
-        await channel.send('Nigga')
+        await channel.send('Bruh')
 
     # if 'mark' in new_message:
     #     await channel.send("Markalicous")
@@ -361,7 +361,7 @@ async def help(ctx):
     embed.add_field(name='_stuff', value = "I am doing stuff", inline = False)
     embed.add_field(name='_john', value = "John", inline = False)
     embed.add_field(name='_usersay', value = "Type the command, @ someone, and type a phrase. Will make user say whatever you enter", inline = False)
-    embed.add_field(name='_poop', value = "This is not a command", inline = False)
+    embed.add_field(name='_poop', value = "This is a command", inline = False)
     embed.add_field(name='_points', value = "Checks how many points you currently have", inline = False)
     
     await ctx.send(embed=embed)
@@ -603,6 +603,23 @@ async def points(ctx, member: discord.Member = None):
         embed.set_author(name=author)
         embed.add_field(name='\u200b', value = f"You have {users[str(user)]['points']} points", inline=False)
         await ctx.send(embed=embed)
+
+#This command make poopoo in pant
+@client.command()
+async def poop(ctx):
+    await ctx.send("░░░░░░░░░░░█▀▀░░█░░░░░░")
+    await ctx.send("░░░░░░▄▀▀▀▀░░░░░█▄▄░░░░")
+    await ctx.send("░░░░░░█░█░░░░░░░░░░▐░░░")
+    await ctx.send("░░░░░░▐▐░░░░░░░░░▄░▐░░░")
+    await ctx.send("░░░░░░█░░░░░░░░▄▀▀░▐░░░")
+    await ctx.send("░░░░▄▀░░░░░░░░▐░▄▄▀░░░░")
+    await ctx.send("░░▄▀░░░▐░░░░░█▄▀░▐░░░░░")
+    await ctx.send("░░█░░░▐░░░░░░░░▄░█░░░░░")
+    await ctx.send("░░░█▄░░▀▄░░░░▄▀▐░█░░░░░")
+    await ctx.send("░░░█▐▀▀▀░▀▀▀▀░░▐░█░░░░░")
+    await ctx.send("░░▐█▐▄░░▀░░░░░░▐░█▄▄░░░")
+    await ctx.send("░░░▀▀░░▄█▄░░░░░▐▄██▀░░░")
+
 
 
 @client.command()
