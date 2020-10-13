@@ -199,30 +199,30 @@ def convert(s):
 # On Message Event
 @client.event
 async def on_message(message):
-        global badWordsList1
-        global count
-        message_lower = message.content.lower()
+    global badWordsList1
+    global count
+    message_lower = message.content.lower()
 
-        new_message = remove_symbol(message_lower)
+    new_message = remove_symbol(message_lower)
         
-        string_value = ",".join(badWordsList1)
-        badWords = string_value.split(",")
+    string_value = ",".join(badWordsList1)
+    badWords = string_value.split(",")
 
-        for word in badWordsList1:
-            if word in new_message:
-                isBadWords = True
+    for word in badWordsList1:
+        if word in new_message:
+            isBadWords = True
 
-        if isBadWords and 'mark' in new_message or 'waterson' in new_message and isBadWords or 'waterboi' in new_message and isBadWords:
-            await channel.send('No')
+    if isBadWords and 'mark' in new_message or 'waterson' in new_message and isBadWords or 'waterboi' in new_message and isBadWords:
+        await channel.send('No')
 
-        if isBadWords and 'waterboy' in new_message:
-            await channel.send('You think Adam Sandler is bad?')
+    if isBadWords and 'waterboy' in new_message:
+        await channel.send('You think Adam Sandler is bad?')
         
-        if 'hasno' in new_message and 'mark' in new_message or 'waterson' in new_message and 'hasno' in new_message:
-            await channel.send('Yes I do.')
+    if 'hasno' in new_message and 'mark' in new_message or 'waterson' in new_message and 'hasno' in new_message:
+        await channel.send('Yes I do.')
 
-        if 'naturalselection' in new_message:
-            await channel.send("Natural selection is the process whereby organisms better adapted to their environment tend to survive and produce more offspring")
+    if 'naturalselection' in new_message:
+        await channel.send("Natural selection is the process whereby organisms better adapted to their environment tend to survive and produce more offspring")
     
     if (message.author.id != 527312390090522635):
             channel = message.channel #current channel
