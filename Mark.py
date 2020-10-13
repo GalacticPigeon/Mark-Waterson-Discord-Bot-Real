@@ -105,7 +105,8 @@ badWordsList1 = ['kneegar',
                     'viagra',
                     'whore',
                     'woman',
-                    'xxx', ]
+                    'xxx', 
+                    'gae']
     
 
 
