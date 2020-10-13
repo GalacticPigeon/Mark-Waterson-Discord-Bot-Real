@@ -199,21 +199,38 @@ def convert(s):
 # On Message Event
 @client.event
 async def on_message(message):
+        global badWordsList1
+        global count
+        message_lower = message.content.lower()
+
+        new_message = remove_symbol(message_lower)
+        
+        string_value = ",".join(badWordsList1)
+        badWords = string_value.split(",")
+
+        for word in badWordsList1:
+            if word in new_message:
+                isBadWords = True
+
+        if isBadWords and 'mark' in new_message or 'waterson' in new_message and isBadWords or 'waterboi' in new_message and isBadWords:
+            await channel.send('No')
+
+        if isBadWords and 'waterboy' in new_message:
+            await channel.send('You think Adam Sandler is bad?')
+        
+        if 'hasno' in new_message and 'mark' in new_message or 'waterson' in new_message and 'hasno' in new_message:
+            await channel.send('Yes I do.')
+
+        if 'naturalselection' in new_message:
+            await channel.send("Natural selection is the process whereby organisms better adapted to their environment tend to survive and produce more offspring")
+    
     if (message.author.id != 527312390090522635):
             channel = message.channel #current channel
             isBadWords = False #boolean for bad words
             # d = enchant.Dict("en_US")
 
 
-        
-            global badWordsList1
-            global count
-            message_lower = message.content.lower()
-
-            new_message = remove_symbol(message_lower)
-
-            string_value = ",".join(badWordsList1)
-            badWords = string_value.split(",")
+    
 
             userSay = ['_usersay']
 
@@ -236,23 +253,7 @@ async def on_message(message):
                 with open('users.json', 'w') as f:
                     json.dump(users, f)
         
-            
 
-            for word in badWordsList1:
-                if word in new_message:
-                    isBadWords = True
-        
-            if isBadWords and 'mark' in new_message or 'waterson' in new_message and isBadWords or 'waterboi' in new_message and isBadWords:
-                await channel.send('No')
-
-            if isBadWords and 'waterboy' in new_message:
-                await channel.send('You think Adam Sandler is bad?')
-        
-            if 'hasno' in new_message and 'mark' in new_message or 'waterson' in new_message and 'hasno' in new_message:
-                await channel.send('Yes I do.')
-
-            if 'naturalselection' in new_message:
-                await channel.send("Natural selection is the process whereby organisms better adapted to their environment tend to survive and produce more offspring")
 
             if 'whatsthedeal' in new_message or "whats the deal" in new_message:
                 pts = await remove_points()
