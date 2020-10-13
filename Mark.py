@@ -199,8 +199,13 @@ def convert(s):
 # On Message Event
 @client.event
 async def on_message(message):
+
+    channel = message.channel #current channel
+    isBadWords = False #boolean for bad words
+    
     global badWordsList1
     global count
+
     message_lower = message.content.lower()
 
     new_message = remove_symbol(message_lower)
@@ -225,8 +230,6 @@ async def on_message(message):
         await channel.send("Natural selection is the process whereby organisms better adapted to their environment tend to survive and produce more offspring")
     
     if (message.author.id != 527312390090522635):
-            channel = message.channel #current channel
-            isBadWords = False #boolean for bad words
             # d = enchant.Dict("en_US")
 
 
