@@ -732,7 +732,7 @@ async def convert(ctx, *, message):
     if len(units) == 0:
         await ctx.send("That number is fucking naked I will not touch it")
         return
-    oldNumber = round(number, 2)
+    oldNumber = number
     number = conv(number, units)
     number = round_to_2(number)
 
