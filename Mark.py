@@ -16,8 +16,6 @@ from itertools import product
 # from nltk.corpus import wordnet as wn
 # import enchant
 
-#TO DO: GO THROUGH USER MESSAGE HISTORY TO CHECK IF THEY INSULTED MARK WHILE BOT WAS OFFLINE
-
 #global variable for the bad words list
 global count #Used as a counter. Wouldn't let me use anything other than count
 count = 0
@@ -125,8 +123,8 @@ def hasNumbers(inputString):
 client = commands.Bot(command_prefix = '_')
 client.remove_command('help')
 status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently facing east',])
-#FIXME: COMMENT OUT
-#os.chdir(r'D:\Documents\Discord Bot')
+#FIXME: COMMENT OUT BEFORE UPLOADING TO GITHUB
+# os.chdir(r'D:\Documents\Discord Bot')
 
 #Tasks
 @tasks.loop(seconds = 600)
@@ -683,7 +681,6 @@ async def convert(ctx, *, message):
     number = numbers[0]
 
     
-    print(units)
     def conv(number, units):
         yards_in_miles = 1760
         feet_in_miles = 5280
@@ -726,7 +723,7 @@ async def convert(ctx, *, message):
     def round_to_2(num):
         answer = 0
         if (num != 0):
-            answer = round(num, 2 - int(floor(log10(abs(num)))) - 1)
+            answer = round(num, 3 - int(floor(log10(abs(num)))) - 1)
         return answer
 
     if len(units) == 0:
