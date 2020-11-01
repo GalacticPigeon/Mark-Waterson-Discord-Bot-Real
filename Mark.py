@@ -13,6 +13,7 @@ from discord import Webhook, AsyncWebhookAdapter
 from discord.utils import get
 from itertools import cycle
 from itertools import product
+from itertools import chain
 # from nltk.corpus import wordnet as wn
 # import enchant
 
@@ -181,7 +182,7 @@ async def on_ready():
 async def on_member_join(member):
     with open('users.json', 'r') as f:
         users = json.load(f)
-    
+
     await update_data(users, member)
 
     with open('users.json', 'w') as f:
@@ -315,7 +316,7 @@ async def update_data(users, user):
         users[str(user.id)] = {}
         users[str(user.id)]['points'] = 0
 
-# Helper function to add/remove points and displays message
+# Helper function to add/remove points and display message
 async def add_points(users, user, pts, award, channel):
     if award:
         users[str(user.id)]['points'] += pts
@@ -338,7 +339,7 @@ async def add_points(users, user, pts, award, channel):
 
 #Helper fucntion to determine whether or not to add points
 async def reward_points():
-    num = random.randint(0,100)
+    num = random.randint(0,70)
 
     if num == 1:
         return True
@@ -348,16 +349,8 @@ async def reward_points():
 async def remove_points():
     pts = random.randint(-20,-1)
     return pts
-    # users[str(user.id)]['points'] += pts
-    # embed = discord.Embed(
-    #         color = discord.Color.red()
-    #     )
-    # embed.add_field(name='haram', value=f'you have lost {abs(pts)} point(s)', inline = False)
-    # await channel.send(embed=embed)
 
 
-# Helper function to display number of points a user has
-# async def disp_points(user):
 
 #Deletes Every New Message
 #@client.event
@@ -376,11 +369,11 @@ async def help(ctx):
     embed.set_author(name="Mark Waterson's friendly list of commands")
     embed.add_field(name='_version', value = 'Checks the fucking version. Do I even need to include this in help?', inline=False)
     embed.add_field(name='_ping', value="If you have to ask I'm removing your computer privelleges",inline=False)
-    embed.add_field(name='_8ball', value = "It's a fucking 8ball what do you want me to say? Type the command and ask a question.", inline = False)
+    embed.add_field(name='_ask', value = "Ask Mark a question and he will answer you", inline = False)
     embed.add_field(name='_stuff', value = "I am doing stuff", inline = False)
     embed.add_field(name='_john', value = "John", inline = False)
     embed.add_field(name='_usersay', value = "Type the command, @ someone, and type a phrase. Will make user say whatever you enter", inline = False)
-    embed.add_field(name='_poop', value = "This is not a command", inline = False)
+    embed.add_field(name='_poop', value = "This is a command", inline = False)
     embed.add_field(name='_points', value = "Checks how many points you currently have", inline = False)
     
     await ctx.send(embed=embed)
@@ -388,7 +381,7 @@ async def help(ctx):
 #Version
 @client.command()
 async def version(ctx):
-    await ctx.send('This is Mark Waterson bot Mk. 1.16')
+    await ctx.send('This is Mark Waterson bot Mk. 1.2!')
 
 # Ping command
 @client.command()
@@ -397,7 +390,7 @@ async def ping(ctx):
 
 #8ball commmand
 @client.command(aliases=['8ball'])
-async def _8ball(ctx, *, question):
+async def ask(ctx, *, question):
     responses = [   'As I see it, yes.',
                     'Ask again later.',
                     'Better not tell you now.',
@@ -418,13 +411,33 @@ async def _8ball(ctx, *, question):
                     'Yes.',
                     'Yes – definitely.',
                     'You may rely on it.',
+
+
                     'I̸̛̙̞̦̠͎̯̩̬͙̯̮͔̔̓͛̔̓͂͂͋̽̅́́̂̄̆̓̿̕͘ ̴̢̡̨̨̭̝̟̮̥̯̣͖͍̖̝̲̳̺̐̂̾̅̐͛̊͊̀̄̓̏͛͗̀̉͗̽͒̕͝͠w̶̨̧̢̢̛͕̬̝̘̥͓͔͙͍̠͖̮̓̊͜i̷̧̨̧̡̢̙̹͚̼͎̳͓̗̲̦̭̭̺͈͈̰̯̲̦̺̽͑̄̽͌͛̿̋̀͒͑̓̓̐́͘̕̕̕ͅͅl̵̨̠͍͉͎̬̺͍̞̪͎͎̰̘̦̘͚̼̲̭͇͑͊̓̈̔̑̈́̐̌̇͐̌̄͑̄̓͐̚l̷̛̛̤̤̥̗̲̺̳͖̑̃̑̔̏͂̀̒̃͝͝ ̴̡̺͔̱̭̠̹͙̼̯̊̽̀͆́ņ̷͔̖͖̫̪̼̆̓̽͐̿͂̉̽̀̕̚͘͜o̴̺͎̙͓͈̫͚̹̼̳͚͐͌̋́͂̅͐ẗ̸̢̧̛͎̞̺̥͔̬̪̼̗͚̰́̃́̅́̏̐̈̓̉̆̅͒́̎̍̏͘͘͝͝͝ ̷̨͇̜̫̯̩̌̈͋͐̽̂̒̾͋̄́͆͋̚̕̚͠c̶͕̠͇̝̲̘͈̭̟̳̲̹̲͖̹̹̻̜͔͔̜̍͂͑͐̔̆͌̌̓̍̊̒͊͛̚͠͝ͅö̷̩͚̥͚͎͍̺͖̙̭̪͓̣̫̤̜̥̜̖̩̭͙͎́͐͋́͝m̴̛͙̼̹͔͍̃̽͋̔̆̊͑̅͒́͊ͅͅp̴̢̢̢̛̥̳̼̞̖̺̼͍͎̣̮͇͉͕͓̎̾͗̀͆̍̍́́̈̄͘͜l̴͓̦̭͍̼̉͒͋̓̕y̶̢̨̛̮̦̺͙͕̳̲̼͍̬͍̘̬̱̳̺̳̹̤̦̪̙͉͖͌̽͗́̅̊̃̈́̕͝͝ͅ'
+                     
+                     
                      ]
+    
+    yesList = ['As I see it, yes.', 'It is certain.', 'It is decidedly so.', 'Most likely.', 'Outlook good.', 'Signs point to yes.',
+               'Without a doubt.', 'Yes.', 'You may rely on it.']
+
+    noList = ['Don’t count on it.', 'My reply is no.', 'No', 'My sources say no.', 'Outlook not so good.', 'Very doubtful.', 'I̸̛̙̞̦̠͎̯̩̬͙̯̮͔̔̓͛̔̓͂͂͋̽̅́́̂̄̆̓̿̕͘ ̴̢̡̨̨̭̝̟̮̥̯̣͖͍̖̝̲̳̺̐̂̾̅̐͛̊͊̀̄̓̏͛͗̀̉͗̽͒̕͝͠w̶̨̧̢̢̛͕̬̝̘̥͓͔͙͍̠͖̮̓̊͜i̷̧̨̧̡̢̙̹͚̼͎̳͓̗̲̦̭̭̺͈͈̰̯̲̦̺̽͑̄̽͌͛̿̋̀͒͑̓̓̐́͘̕̕̕ͅͅl̵̨̠͍͉͎̬̺͍̞̪͎͎̰̘̦̘͚̼̲̭͇͑͊̓̈̔̑̈́̐̌̇͐̌̄͑̄̓͐̚l̷̛̛̤̤̥̗̲̺̳͖̑̃̑̔̏͂̀̒̃͝͝ ̴̡̺͔̱̭̠̹͙̼̯̊̽̀͆́ņ̷͔̖͖̫̪̼̆̓̽͐̿͂̉̽̀̕̚͘͜o̴̺͎̙͓͈̫͚̹̼̳͚͐͌̋́͂̅͐ẗ̸̢̧̛͎̞̺̥͔̬̪̼̗͚̰́̃́̅́̏̐̈̓̉̆̅͒́̎̍̏͘͘͝͝͝ ̷̨͇̜̫̯̩̌̈͋͐̽̂̒̾͋̄́͆͋̚̕̚͠c̶͕̠͇̝̲̘͈̭̟̳̲̹̲͖̹̹̻̜͔͔̜̍͂͑͐̔̆͌̌̓̍̊̒͊͛̚͠͝ͅö̷̩͚̥͚͎͍̺͖̙̭̪͓̣̫̤̜̥̜̖̩̭͙͎́͐͋́͝m̴̛͙̼̹͔͍̃̽͋̔̆̊͑̅͒́͊ͅͅp̴̢̢̢̛̥̳̼̞̖̺̼͍͎̣̮͇͉͕͓̎̾͗̀͆̍̍́́̈̄͘͜l̴͓̦̭͍̼̉͒͋̓̕y̶̢̨̛̮̦̺͙͕̳̲̼͍̬͍̘̬̱̳̺̳̹̤̦̪̙͉͖͌̽͗́̅̊̃̈́̕͝͝ͅ']
 
     if hasNumbers(question):
         await ctx.send(f'Question: {question}\nAnswer: Don’t count on it.')
     elif 'will you listen' in question:
-        await ctx.send('I̸̛̙̞̦̠͎̯̩̬͙̯̮͔̔̓͛̔̓͂͂͋̽̅́́̂̄̆̓̿̕͘ ̴̢̡̨̨̭̝̟̮̥̯̣͖͍̖̝̲̳̺̐̂̾̅̐͛̊͊̀̄̓̏͛͗̀̉͗̽͒̕͝͠w̶̨̧̢̢̛͕̬̝̘̥͓͔͙͍̠͖̮̓̊͜i̷̧̨̧̡̢̙̹͚̼͎̳͓̗̲̦̭̭̺͈͈̰̯̲̦̺̽͑̄̽͌͛̿̋̀͒͑̓̓̐́͘̕̕̕ͅͅl̵̨̠͍͉͎̬̺͍̞̪͎͎̰̘̦̘͚̼̲̭͇͑͊̓̈̔̑̈́̐̌̇͐̌̄͑̄̓͐̚l̷̛̛̤̤̥̗̲̺̳͖̑̃̑̔̏͂̀̒̃͝͝ ̴̡̺͔̱̭̠̹͙̼̯̊̽̀͆́ņ̷͔̖͖̫̪̼̆̓̽͐̿͂̉̽̀̕̚͘͜o̴̺͎̙͓͈̫͚̹̼̳͚͐͌̋́͂̅͐ẗ̸̢̧̛͎̞̺̥͔̬̪̼̗͚̰́̃́̅́̏̐̈̓̉̆̅͒́̎̍̏͘͘͝͝͝ ̷̨͇̜̫̯̩̌̈͋͐̽̂̒̾͋̄́͆͋̚̕̚͠c̶͕̠͇̝̲̘͈̭̟̳̲̹̲͖̹̹̻̜͔͔̜̍͂͑͐̔̆͌̌̓̍̊̒͊͛̚͠͝ͅö̷̩͚̥͚͎͍̺͖̙̭̪͓̣̫̤̜̥̜̖̩̭͙͎́͐͋́͝m̴̛͙̼̹͔͍̃̽͋̔̆̊͑̅͒́͊ͅͅp̴̢̢̢̛̥̳̼̞̖̺̼͍͎̣̮͇͉͕͓̎̾͗̀͆̍̍́́̈̄͘͜l̴͓̦̭͍̼̉͒͋̓̕y̶̢̨̛̮̦̺͙͕̳̲̼͍̬͍̘̬̱̳̺̳̹̤̦̪̙͉͖͌̽͗́̅̊̃̈́̕͝͝ͅ')
+        await ctx.send(f"Question: {question}\nAnswer: I̸̛̙̞̦̠͎̯̩̬͙̯̮͔̔̓͛̔̓͂͂͋̽̅́́̂̄̆̓̿̕͘ ̴̢̡̨̨̭̝̟̮̥̯̣͖͍̖̝̲̳̺̐̂̾̅̐͛̊͊̀̄̓̏͛͗̀̉͗̽͒̕͝͠w̶̨̧̢̢̛͕̬̝̘̥͓͔͙͍̠͖̮̓̊͜i̷̧̨̧̡̢̙̹͚̼͎̳͓̗̲̦̭̭̺͈͈̰̯̲̦̺̽͑̄̽͌͛̿̋̀͒͑̓̓̐́͘̕̕̕ͅͅl̵̨̠͍͉͎̬̺͍̞̪͎͎̰̘̦̘͚̼̲̭͇͑͊̓̈̔̑̈́̐̌̇͐̌̄͑̄̓͐̚l̷̛̛̤̤̥̗̲̺̳͖̑̃̑̔̏͂̀̒̃͝͝ ̴̡̺͔̱̭̠̹͙̼̯̊̽̀͆́ņ̷͔̖͖̫̪̼̆̓̽͐̿͂̉̽̀̕̚͘͜o̴̺͎̙͓͈̫͚̹̼̳͚͐͌̋́͂̅͐ẗ̸̢̧̛͎̞̺̥͔̬̪̼̗͚̰́̃́̅́̏̐̈̓̉̆̅͒́̎̍̏͘͘͝͝͝ ̷̨͇̜̫̯̩̌̈͋͐̽̂̒̾͋̄́͆͋̚̕̚͠c̶͕̠͇̝̲̘͈̭̟̳̲̹̲͖̹̹̻̜͔͔̜̍͂͑͐̔̆͌̌̓̍̊̒͊͛̚͠͝ͅö̷̩͚̥͚͎͍̺͖̙̭̪͓̣̫̤̜̥̜̖̩̭͙͎́͐͋́͝m̴̛͙̼̹͔͍̃̽͋̔̆̊͑̅͒́͊ͅͅp̴̢̢̢̛̥̳̼̞̖̺̼͍͎̣̮͇͉͕͓̎̾͗̀͆̍̍́́̈̄͘͜l̴͓̦̭͍̼̉͒͋̓̕y̶̢̨̛̮̦̺͙͕̳̲̼͍̬͍̘̬̱̳̺̳̹̤̦̪̙͉͖͌̽͗́̅̊̃̈́̕͝͝ͅ")
+    
+    
+    
+    elif 'lie' in question and 'you' in question or 'mark' in question or 'Mark' in question:
+        if 'never' in question:
+            await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
+        else:
+            await ctx.send(f'Question: {question}\nAnswer: {random.choice(noList)}')
+    
+    elif 'french' in question or 'French' in question and 'eliminated' in question or 'killed' in question or 'eradicated' in question or 'destroyed' in question:
+        await ctx.send(f'Question: {question}\nAnswer: {random.choice(yesList)}')
     else:
         await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
 
@@ -592,52 +605,131 @@ async def usersay(ctx, member: discord.Member = None, *, message):
 
 # Points command displays user's points
 @client.command()
-async def points(ctx, member: discord.Member = None):
+async def points(ctx, *message):
     channel = ctx.channel
+    pointsCount = 0
     user = ctx.author.id
     author = ctx.author.display_name
+    totalPoints = 0
+    message = str(message)
     with open('users.json', 'r') as f:
         users = json.load(f)
+    # f = open('users.json', 'r')
+    # users = json.load(f)
+    # f.close()
+    new_message = remove_symbol(message.lower())
     # await ctx.send("There is currently no way to check your points until I, Mark Waterson, deem it so")
     # await ctx.send(f"You have {users[str(user)]['points']} points")
+    if 'total,' in new_message:
+        # #usersFile = json.load('users.json', 'r')    
+        # temp = re.sub(r'[\[\]\(\), ]', '', str(users.items())) 
+        # res = [int(ele) for ele in set(temp)] 
+        # print(str(res))  
 
-    if(users[str(user)]['points'] > 0):
+        # Gets points from json file
+        # Excludes Spencer
+        for k,v in users.items():
+            if (k != "527312390090522635"):
+                try:
+                    v = int(v['points'])
+                    pointsCount = int(v)
+                except:
+                    pass
+                isStr = isinstance(pointsCount, str)
+                if not isStr:
+                    totalPoints += pointsCount
+        
+        if(totalPoints > 0):
+            embed = discord.Embed(
+            color = discord.Color.green()
+            )
+            embed.set_author(name="Total Points")
+            embed.add_field(name='\u200b', value = f"There are currently {totalPoints} points in circulation", inline=False)
+            await ctx.send(embed=embed)
+        elif(totalPoints < 0):
+                embed = discord.Embed(
+                color = discord.Color.red()
+                )
+                embed.set_author(name="Total Points")
+                embed.add_field(name='\u200b', value = f"There are currently {totalPoints} points in circulation", inline=False)
+                await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed(
+            color = discord.Color.light_grey()
+            )
+            embed.set_author(name="Total Points")
+            embed.add_field(name='\u200b', value = f"There are currently {totalPoints} points in circulation", inline=False)
+            await ctx.send(embed=embed)
+        return
+
+    if user == 310162848254787585:
         embed = discord.Embed(
         color = discord.Color.green()
         )
         embed.set_author(name=author)
         embed.add_field(name='\u200b', value = f"You have {users[str(user)]['points']} points", inline=False)
         await ctx.send(embed=embed)
-    elif(users[str(user)]['points'] == 0):
-        embed = discord.Embed(
-            color = discord.Color.light_grey()
-        )
-        embed.set_author(name=author)
-        embed.add_field(name='\u200b', value = f"You have {users[str(user)]['points']} points", inline=False)
-        await ctx.send(embed=embed)
-    else:
-        embed = discord.Embed(
-        color = discord.Color.red()
-        )
-        embed.set_author(name=author)
-        embed.add_field(name='\u200b', value = f"You have {users[str(user)]['points']} points", inline=False)
-        await ctx.send(embed=embed)
+    elif user == 527312390090522635:
+        if(users[str(user)]['points'] > 0):
+            embed = discord.Embed(
+            color = discord.Color.green()
+            )
+            embed.set_author(name=author)
+            embed.add_field(name='\u200b', value = f"You have {users[str(user)]['points']} points", inline=False)
+            await ctx.send(embed=embed)
+        elif(users[str(user)]['points'] == 0):
+            embed = discord.Embed(
+                color = discord.Color.light_grey()
+            )
+            embed.set_author(name=author)
+            embed.add_field(name='\u200b', value = f"You have {users[str(user)]['points']} points", inline=False)
+            await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed(
+            color = discord.Color.red()
+            )
+            embed.set_author(name=author)
+            embed.add_field(name='\u200b', value = f"You have {users[str(user)]['points']} points", inline=False)
+            await ctx.send(embed=embed)
+    else:    
+        if(users[str(user)]['points'] > 0):
+            embed = discord.Embed(
+            color = discord.Color.green()
+            )
+            embed.set_author(name=author)
+            embed.add_field(name='\u200b', value = f"You have {users[str(user)]['points']} points", inline=False)
+            await ctx.send(embed=embed)
+        elif(users[str(user)]['points'] == 0):
+            embed = discord.Embed(
+                color = discord.Color.light_grey()
+            )
+            embed.set_author(name=author)
+            embed.add_field(name='\u200b', value = f"You have {users[str(user)]['points']} points", inline=False)
+            await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed(
+            color = discord.Color.red()
+            )
+            embed.set_author(name=author)
+            embed.add_field(name='\u200b', value = f"You have {users[str(user)]['points']} points", inline=False)
+            await ctx.send(embed=embed)
 
-#This command make poopoo in pant
-# @client.command()
-# async def poop(ctx):
-#     await ctx.send("░░░░░░░░░░░█▀▀░░█░░░░░░")
-#     await ctx.send("░░░░░░▄▀▀▀▀░░░░░█▄▄░░░░")
-#     await ctx.send("░░░░░░█░█░░░░░░░░░░▐░░░")
-#     await ctx.send("░░░░░░▐▐░░░░░░░░░▄░▐░░░")
-#     await ctx.send("░░░░░░█░░░░░░░░▄▀▀░▐░░░")
-#     await ctx.send("░░░░▄▀░░░░░░░░▐░▄▄▀░░░░")
-#     await ctx.send("░░▄▀░░░▐░░░░░█▄▀░▐░░░░░")
-#     await ctx.send("░░█░░░▐░░░░░░░░▄░█░░░░░")
-#     await ctx.send("░░░█▄░░▀▄░░░░▄▀▐░█░░░░░")
-#     await ctx.send("░░░█▐▀▀▀░▀▀▀▀░░▐░█░░░░░")
-#     await ctx.send("░░▐█▐▄░░▀░░░░░░▐░█▄▄░░░")
-#     await ctx.send("░░░▀▀░░▄█▄░░░░░▐▄██▀░░░")
+# This command make poopoo in pant
+@client.command()
+async def poop(ctx):
+    if ctx.author.id != 527312390090522635:
+        await ctx.send("░░░░░░░░░░░█▀▀░░█░░░░░")
+        await ctx.send("░░░░░░▄▀▀▀▀░░░░░█▄▄░░░")
+        await ctx.send("░░░░░░█░█░░░░░░░░░░▐░░")
+        await ctx.send("░░░░░░▐▐░░░░░░░░░▄░▐░░")
+        await ctx.send("░░░░░░█░░░░░░░░▄▀▀░▐░░")
+        await ctx.send("░░░░▄▀░░░░░░░░▐░▄▄▀░░░")
+        await ctx.send("░░▄▀░░░▐░░░░░█▄▀░▐░░░░")
+        await ctx.send("░░█░░░▐░░░░░░░░▄░█░░░░")
+        await ctx.send("░░░█▄░░▀▄░░░░▄▀▐░█░░░░")
+        await ctx.send("░░░█▐▀▀▀░▀▀▀▀░░▐░█░░░░")
+        await ctx.send("░░▐█▐▄░░▀░░░░░░▐░█▄▄░░")
+        await ctx.send("░░░▀▀░░▄█▄░░░░░▐▄██▀░░")
 
 
 
