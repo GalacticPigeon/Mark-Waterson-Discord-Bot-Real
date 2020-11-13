@@ -79,7 +79,7 @@ async def on_member_update(before, after):
 #        except Exception as e:
 #            print(f"{cog} failed to load:")
 #            raise e
-
+cogs_dir = "cogs"
 if __name__ == '__main__':
     for extension in [f.replace('.py', '') for f in listdir(cogs_dir) if isfile(join(cogs_dir, f))]:
         try:
