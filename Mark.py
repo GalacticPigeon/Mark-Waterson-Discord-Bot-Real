@@ -3,6 +3,7 @@ import json
 import time
 import os
 from os import listdir
+from os.path import isfile, join
 import logging
 import random
 import aiohttp
