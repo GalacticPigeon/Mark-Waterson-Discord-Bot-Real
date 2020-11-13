@@ -2,6 +2,7 @@ import discord
 import json
 import time
 import os
+from os import listdir
 import logging
 import random
 import aiohttp
