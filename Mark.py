@@ -31,7 +31,8 @@ status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently faci
 
 #Create database
 async def create_db_pool():
-    client.pg_con = await asyncpg.create_pool(database="dao8a0cgglvabc", user="dhluktlzulnova", password="89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a")
+    #await asyncpg.connect("postgres://dhluktlzulnova:89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a@ec2-23-23-36-227.compute-1.amazonaws.com:5432/dao8a0cgglvabc?ssl=true")
+    client.pg_con = await asyncpg.create_pool(database="dao8a0cgglvabc", user="dhluktlzulnova", password="89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a", ssl="require")
 
 #Tasks
 @tasks.loop(seconds = 600)
@@ -72,7 +73,7 @@ async def on_member_update(before, after):
 
 
 #COGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGS
-#for cog in cog:
+# for cog in cog:
 #    if cog.endswith(".py") and not cog.startswith("_"):
 #        try:
 #            cogs = f"cogs.{cog.replace('.py','')}"
@@ -83,11 +84,12 @@ async def on_member_update(before, after):
 cogs_dir = "cogs"
 if __name__ == '__main__':
     for extension in [f.replace('.py', '') for f in listdir(cogs_dir) if isfile(join(cogs_dir, f))]:
-        try:
-            client.load_extension(cogs_dir + "." + extension)
-        except (discord.ClientException, ModuleNotFoundError):
-            print(f'Failed to load extension {extension}.')
-            raise e
+        if not extension.startswith("_"):
+            try:
+                print(cogs_dir + "." + extension)
+                client.load_extension(cogs_dir + "." + extension)
+            except (discord.ClientException, ModuleNotFoundError):
+                print(f'Failed to load extension {extension}.')
 
 #Reload Cog Command
 @client.command(hidden=True)
