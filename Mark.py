@@ -79,23 +79,23 @@ async def on_member_update(before, after):
 
 
 #COGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGS
-for cog in os.listdir(".\\cogs"):
-   if cog.endswith(".py") and not cog.startswith("_"):
-       try:
-           cogs = f"cogs.{cog.replace('.py','')}"
-           client.load_extension(cogs)
-       except Exception as e:
-           print(f"{cog} failed to load:")
-           raise e
+# for cog in os.listdir(".\\cogs"):
+#    if cog.endswith(".py") and not cog.startswith("_"):
+#        try:
+#            cogs = f"cogs.{cog.replace('.py','')}"
+#            client.load_extension(cogs)
+#        except Exception as e:
+#            print(f"{cog} failed to load:")
+#            raise e
 cogs_dir = "cogs"
-# if __name__ == '__main__':
-#     for extension in [f.replace('.py', '') for f in listdir(cogs_dir) if isfile(join(cogs_dir, f))]:
-#         if not extension.startswith("_"):
-#             try:
-#                 print(cogs_dir + "." + extension)
-#                 client.load_extension(cogs_dir + "." + extension)
-#             except (discord.ClientException, ModuleNotFoundError):
-#                 print(f'Failed to load extension {extension}.')
+if __name__ == '__main__':
+    for extension in [f.replace('.py', '') for f in listdir(cogs_dir) if isfile(join(cogs_dir, f))]:
+        if not extension.startswith("_"):
+            try:
+                print(cogs_dir + "." + extension)
+                client.load_extension(cogs_dir + "." + extension)
+            except (discord.ClientException, ModuleNotFoundError):
+                print(f'Failed to load extension {extension}.')
 
 #Reload Cog Command
 @client.command(hidden=True)
