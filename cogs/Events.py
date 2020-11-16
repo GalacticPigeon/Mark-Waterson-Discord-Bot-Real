@@ -3,10 +3,6 @@ from discord.ext import commands
 import random
 import json
 
-#List of f o r b i d d e n words
-with open('badWords.json', 'r') as f:
-    badWordsList = json.load(f)
-
 def remove_symbol(message):
     #list of chars to remove
     badCharsList = [';', ' ', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
@@ -17,6 +13,10 @@ def remove_symbol(message):
             message = message.replace(symbol,"")
     
     return message
+
+#List of f o r b i d d e n words
+with open('badWords.json', 'r') as f:
+    badWordsList = json.load(f)
 
 class Events(commands.Cog):
     """No commands here no point in going here."""
@@ -36,7 +36,7 @@ class Events(commands.Cog):
             if word in new_message:
                 isBadWords = True
         
-        if isBadWords and 'mark' in new_message or 'waterson' in new_message and isBadWords or 'waterboi' in new_message and isBadWords:
+        if 'mark' in new_message and isBadWords or 'waterson' in new_message and isBadWords or 'waterboi' in new_message and isBadWords:
             await channel.send('No')
 
         if isBadWords and 'waterboy' in new_message:

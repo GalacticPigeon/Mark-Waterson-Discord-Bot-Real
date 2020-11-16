@@ -15,14 +15,24 @@ class SocialCredit(commands.Cog):
         curr_social_credit = user['sc']
         gain_function = round(2.1003*(curr_social_credit ** 3)- 0.0025*(curr_social_credit ** 2) + 15.454 * (curr_social_credit) + 0.7534)
         remove_function = round(2.1003*((curr_social_credit - 1) ** 3)- 0.0025*((curr_social_credit - 1) ** 2) + 15.454 * (curr_social_credit - 1) + 0.7534)
+        count = 0
 
         if curr_uwus >= gain_function:
-            await self.bot.pg_con.execute("UPDATE users SET sc = $1 WHERE user_id = $2 AND guild_id = $3", curr_social_credit + 1, user['user_id'], user['guild_id'])
-            return 1
-        elif curr_uwus < (remove_function - 20):
-            curr_social_credit = curr_social_credit - 1
+            while curr_uwus >= gain_function:
+                count = count + 1
+                gain_function = round(2.1003*((curr_social_credit + count) ** 3)- 0.0025*((curr_social_credit + count) ** 2) + 15.454 * (curr_social_credit + count) + 0.7534)
+
+            await self.bot.pg_con.execute("UPDATE users SET sc = $1 WHERE user_id = $2 AND guild_id = $3", curr_social_credit + count, user['user_id'], user['guild_id'])
+            return count
+        elif curr_uwus < (remove_function - 17):
+            while curr_uwus < (remove_function - 17):
+                count = count + 1
+                remove_function = round(2.1003*((curr_social_credit - count) ** 3)- 0.0025*((curr_social_credit - count) ** 2) + 15.454 * (curr_social_credit - count) + 0.7534)
+
+            curr_social_credit = curr_social_credit - count
             await self.bot.pg_con.execute("UPDATE users SET sc = $1 WHERE user_id = $2 AND guild_id = $3", curr_social_credit, user['user_id'], user['guild_id'])
-            return 2
+            count = count * -1
+            return count
         else:
             return -1
 
@@ -50,8 +60,7 @@ class SocialCredit(commands.Cog):
         
         user = await self.bot.pg_con.fetchrow("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
         if reward_uwus():
-            num_uwus = random.randint(-4,-1)
-            num_uwus = 0
+            num_uwus = random.randint(-10,20)
             await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", user['uwus'] + num_uwus, author_id, guild_id)
             if num_uwus >= 0:
                 embed = discord.Embed(
@@ -70,21 +79,21 @@ class SocialCredit(commands.Cog):
 
 
         if not "_reset" in message.content.lower():
+            num = await self.change_lvl(user)
             if await self.change_lvl(user) > 0:
-                num = await self.change_lvl(user)
-                if num == 1:
+                if num > 1:
                     embed = discord.Embed(
                         color = discord.Color.orange()
                     )
                     embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
-                    embed.add_field(name='\u200b', value=f"{message.author.display_name} now has a Social Credit of {user['sc'] + 1}", inline = False)
+                    embed.add_field(name='\u200b', value=f"{message.author.display_name} now has a Social Credit of {user['sc'] + num}", inline = False)
                     await message.channel.send(embed=embed)
                 else:
                     embed = discord.Embed(
                         color = discord.Color.orange()
                     )
                     embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
-                    embed.add_field(name='\u200b', value=f"{message.author.display_name} now has a Social Credit of {user['sc'] - 1}", inline = False)
+                    embed.add_field(name='\u200b', value=f"{message.author.display_name} now has a Social Credit of {user['sc'] + 1}", inline = False)
                     await message.channel.send(embed=embed)
     
 
@@ -101,7 +110,7 @@ class SocialCredit(commands.Cog):
         #user = await self.bot.pg_con.fetch("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", member_id, guild_id)
 
         try:
-            await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", 0, member_id, guild_id)
+            await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", 10, member_id, guild_id)
             await self.bot.pg_con.execute("UPDATE users SET sc = $1 WHERE user_id = $2 AND guild_id = $3", 1, member_id, guild_id)
             await ctx.channel.send(f"{member.display_name}'s Social Credit and UwUs have been reset")
         except Exception as e:
@@ -109,7 +118,7 @@ class SocialCredit(commands.Cog):
             pass
 
     #Lets me add uwus for testing
-    @commands.command(Hidden=True)
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def add(self, ctx, num, member: discord.Member = None):
         """Owner only command do not concern yourself mortal"""
@@ -124,48 +133,6 @@ class SocialCredit(commands.Cog):
         except Exception as e:
             raise e
             pass
-
-
-    @commands.command(aliases=['uwus'])
-    async def credit(self, ctx, member: discord.Member = None):
-        """Checks a user's Social Credit and UwUs usage: `_credit` or `_credit [member]`"""
-        member = ctx.author if not member else member
-        member_id = str(member.id)
-        guild_id = str(ctx.guild.id)
-
-        user = await self.bot.pg_con.fetch("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", member_id, guild_id)
-
-        if not user:
-            embed = discord.Embed(
-                color = discord.Color.light_grey()
-            )
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar_url)
-            embed.add_field(name=f'Social Credit - {member.display_name}', value="No Social Credit", inline = False)
-            await ctx.channel.send(embed=embed)
-        else:
-            if user[0]['sc'] > 0:
-                embed = discord.Embed(
-                    color = discord.Color.gold()
-                )
-                embed.set_author(name=member.display_name, icon_url=ctx.author.avatar_url)
-                embed.add_field(name=f"UwUs - {member.display_name}", value=user[0]['uwus'], inline=False)
-                embed.add_field(name=f"Social Credit - {member.display_name}", value=user[0]['sc'], inline=False)
-            elif user[0]['sc'] == 0:
-                embed = discord.Embed(
-                    color = discord.Color.light_grey()
-                )
-                embed.set_author(name=member.display_name, icon_url=ctx.author.avatar_url)
-                embed.add_field(name=f"UwUs - {member.display_name}", value=user[0]['uwus'], inline = False)
-                embed.add_field(name=f"Social Credit - {member.display_name}", value=user[0]['sc'], inline = False)
-            else:
-                embed = discord.Embed(
-                    color = discord.Color.red()
-                )
-                embed.set_author(name=member.display_name, icon_url=ctx.author.avatar_url)
-                embed.add_field(name=f"UwUs - {member.display_name}", value=self.users[member_id]['uwus'], inline = False)
-                embed.add_field(name=f"Social Credit - {member.display_name}", value=self.users[member_id]['sc'], inline = False)
-                
-            await ctx.channel.send(embed=embed)
 
 
 
