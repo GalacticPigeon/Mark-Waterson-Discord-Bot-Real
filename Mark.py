@@ -8,6 +8,7 @@ import logging
 import random
 import aiohttp
 import asyncpg
+import asyncio
 import re
 import traceback
 from discord.ext import commands, tasks
@@ -32,8 +33,12 @@ status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently faci
 #Create database
 async def create_db_pool():
     #await asyncpg.connect("postgres://dhluktlzulnova:89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a@ec2-23-23-36-227.compute-1.amazonaws.com:5432/dao8a0cgglvabc?ssl=true")
-    client.pg_con = await asyncpg.create_pool(database="dao8a0cgglvabc", user="dhluktlzulnova", password="89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a")
-
+    try:
+        #client.pg_con = await asyncpg.create_pool(database="testDB", user="postgres", password="Q.sweaty42")
+        client.pg_con = await asyncpg.create_pool(database="dao8a0cgglvabc", user="dhluktlzulnova",
+        password="89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a")
+    except Exception as e:
+        raise e
 #Tasks
 @tasks.loop(seconds = 600)
 async def change_status():
@@ -73,7 +78,7 @@ async def on_member_update(before, after):
 
 
 #COGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGSCOGS
-# for cog in cog:
+# for cog in os.listdir(".\\cogs"):
 #    if cog.endswith(".py") and not cog.startswith("_"):
 #        try:
 #            cogs = f"cogs.{cog.replace('.py','')}"
@@ -150,6 +155,16 @@ async def usersay(ctx, member: discord.Member = None, *, message):
     webhook = await channel.create_webhook(name = memberName)
     await webhook.send(message, username = memberName, avatar_url = avatar)
     await webhook.delete()
+
+@usersay.error
+async def blackjack_error(self, ctx, error):
+    if isinstance(error, commands.BotMissingPermissions):
+        msg = ":x: {:}".format(error)
+        await ctx.send(msg)
+        asyncio.sleep(4)
+        await client.delete_message(msg)
+    else:
+        raise error
 
 #Run database
 client.loop.run_until_complete(create_db_pool())
