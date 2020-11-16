@@ -36,6 +36,16 @@ class SocialCredit(commands.Cog):
         else:
             return -1
 
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        user_id = str(member.id)
+        guild_id = str(member.guild.id)
+
+        user = await self.bot.pg_con.fetch("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", user_id, guild_id)
+        
+        if not user:
+            await self.bot.pg_con.execute("INSERT INTO users (user_id, guild_id, uwus, sc) VALUES ($1, $2, 10, 1)", user_id, guild_id)
+
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -51,7 +61,7 @@ class SocialCredit(commands.Cog):
             await self.bot.pg_con.execute("INSERT INTO users (user_id, guild_id, uwus, sc) VALUES ($1, $2, 10, 1)", author_id, guild_id)
 
         def reward_uwus():
-            num = random.randint(0,100)
+            num = random.randint(0,70)
 
             if num == 0:
                 return True
@@ -60,7 +70,7 @@ class SocialCredit(commands.Cog):
         
         user = await self.bot.pg_con.fetchrow("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
         if reward_uwus():
-            num_uwus = random.randint(-10,20)
+            num_uwus = random.randint(-15,50)
             await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", user['uwus'] + num_uwus, author_id, guild_id)
             if num_uwus >= 0:
                 embed = discord.Embed(
