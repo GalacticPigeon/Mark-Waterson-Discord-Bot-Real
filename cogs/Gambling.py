@@ -251,7 +251,7 @@ class Gambling(commands.Cog):
         if (num_uwus < 0):
             amount = random.randint(abs(num_uwus), abs(num_uwus) + 10)
         else:
-            amount = random.randint(30, 100)
+            amount = random.randint(30, 120)
         
         await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", 
         user[0]['uwus'] + amount, author_id, guild_id)
@@ -367,21 +367,13 @@ class Gambling(commands.Cog):
                 
                 result = await self.check_result()
                 if result == "WIN":
-                    if self.get_score(self.player) == 21:
-                        color = discord.Color.default()
-                        result = "YOU HAVE BLACKJACK\n YOU WIN"
-                    else:
-                        color = discord.Color.green()
+                    color = discord.Color.green()
                 elif result == "PUSH":
                     color = discord.Color.greyple()
                 else:
-                    if self.get_score(self.dealer) == 21:
-                        color = discord.Color.red()
-                        result = "MARK HAS BLACKJACK\n YOU LOSE HAHA"
-                    else:
-                        color = discord.Color.red()
+                    color = discord.Color.red()
                 
-                self.embed = self.update_ui(ctx, result, True, color)
+                self.embed = self.update_ui(ctx, await self.check_result(), True, color)
                 await self.msg.edit(embed=self.embed)
                 break
 
@@ -457,17 +449,17 @@ class Gambling(commands.Cog):
         if self.get_score(self.player, True) == 21:
             if self.get_score(self.dealer, True) == 21:
                 await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'], author_id, guild_id)
-                color = discord.Color.greyple()
+                color = 1
                 self.embed = self.update_ui(ctx_m, "BLACKJACK\n PUSH", True, color)
                 self.stop_flag = True
             else:
                 await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'] + self.bet * 2.5, 
                 self.author_id, self.guild_id)
-                color = discord.Color.default();
+                color = True
                 self.embed = self.update_ui(ctx_m, "YOU HAVE BLACKJACK\n YOU WIN", True, color)
                 self.stop_flag = True
         elif self.get_score(self.dealer, True) == 21:
-            color = discord.Color.red()
+            color = False
             self.embed = self.update_ui(ctx_m, "MARK HAS BLACKJACK\n YOU LOSE HAHA", True, color)
             self.stop_flag = True
     
