@@ -457,17 +457,17 @@ class Gambling(commands.Cog):
         if self.get_score(self.player, True) == 21:
             if self.get_score(self.dealer, True) == 21:
                 await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'], author_id, guild_id)
-                color = 1
+                color = discord.Color.greyple()
                 self.embed = self.update_ui(ctx_m, "BLACKJACK\n PUSH", True, color)
                 self.stop_flag = True
             else:
                 await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'] + self.bet * 2.5, 
                 self.author_id, self.guild_id)
-                color = True
+                color = discord.Color.black()
                 self.embed = self.update_ui(ctx_m, "YOU HAVE BLACKJACK\n YOU WIN", True, color)
                 self.stop_flag = True
         elif self.get_score(self.dealer, True) == 21:
-            color = False
+            color = discord.Color.red()
             self.embed = self.update_ui(ctx_m, "MARK HAS BLACKJACK\n YOU LOSE HAHA", True, color)
             self.stop_flag = True
     
