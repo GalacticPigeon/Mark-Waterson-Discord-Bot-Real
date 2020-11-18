@@ -251,7 +251,7 @@ class Gambling(commands.Cog):
         if (num_uwus < 0):
             amount = random.randint(abs(num_uwus), abs(num_uwus) + 10)
         else:
-            amount = random.randint(10, 50)
+            amount = random.randint(30, 100)
         
         await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", 
         user[0]['uwus'] + amount, author_id, guild_id)
