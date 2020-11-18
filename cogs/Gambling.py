@@ -367,13 +367,21 @@ class Gambling(commands.Cog):
                 
                 result = await self.check_result()
                 if result == "WIN":
-                    color = discord.Color.green()
+                    if self.get_score(self.player) == 21:
+                        color = discord.Color.black()
+                        result = "YOU HAVE BLACKJACK\n YOU WIN"
+                    else:
+                        color = discord.Color.green()
                 elif result == "PUSH":
                     color = discord.Color.greyple()
                 else:
-                    color = discord.Color.red()
+                    if self.get_score(self.dealer) == 21:
+                        color = discord.Color.red()
+                        result = "MARK HAS BLACKJACK\n YOU LOSE HAHA"
+                    else:
+                        color = discord.Color.red()
                 
-                self.embed = self.update_ui(ctx, await self.check_result(), True, color)
+                self.embed = self.update_ui(ctx, result, True, color)
                 await self.msg.edit(embed=self.embed)
                 break
 
