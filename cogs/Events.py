@@ -53,6 +53,9 @@ class Events(commands.Cog):
             
         if 'whats' in new_message and 'ping' in new_message:
             await channel.send('Bruh')
+        
+        if "mark" in new_message and "bigsoy" in new_message:
+            await channel.send('👀')
 
         if 'why' in new_message:
             randNum = random.randint(0,5);
