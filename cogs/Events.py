@@ -104,7 +104,7 @@ class Events(commands.Cog):
         if uwuCount > 0:
             SocialCredit = self.bot.get_cog('SocialCredit')
             print(f"removed {uwuCount} uwus")
-            await SocialCredit.remove_points(author_id, guild_id, uwuCount)
+            await SocialCredit.remove_points(author_id, guild_id, uwuCount, message)
             uwuCount = 0
 
         
