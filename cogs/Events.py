@@ -95,14 +95,15 @@ class Events(commands.Cog):
                     uwuCount += 1
                 elif middle_char(word) in list_of_ws:
                     uwuCount = uwuCount + 1
-                # else:
-                #     for s in complicatedUwUs:
-                #         s = remove_symbol(s)
-                #         if len(s) > 2 and isPalindrome(s):
-                #             uwuCount = uwuCount + 1
+                else:
+                    for s in complicatedUwUs:
+                        s = remove_symbol(s)
+                        if len(s) > 2 and isPalindrome(s):
+                            uwuCount = uwuCount + 1
         
         if uwuCount > 0:
             SocialCredit = self.bot.get_cog('SocialCredit')
+            print(f"removed {uwuCount} uwus")
             await SocialCredit.remove_points(author_id, guild_id, uwuCount)
             uwuCount = 0
 
