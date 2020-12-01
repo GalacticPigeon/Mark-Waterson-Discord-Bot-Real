@@ -3,12 +3,19 @@ from discord.ext import commands
 
 import random
 
+def remove_symbol(message):
+    #list of chars to remove
+    badCharsList = [';', ' ', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
+    '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’"]
+
 class SocialCredit(commands.Cog):
     """Commands dealing with Social Credit and UwUs!"""
     def __init__(self, bot):
         self.bot = bot
 
-
+    async def remove_points(self, author_id: str, guild_id: str, count):
+        user = await self.bot.pg_con.fetchrow("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
+        await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", user['uwus'] - count, author_id, guild_id)
     
     async def change_lvl(self, user):
         curr_uwus = user['uwus']
