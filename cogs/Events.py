@@ -122,7 +122,7 @@ class Events(commands.Cog):
             await channel.send('Yes I do.')
 
         if 'naturalselection' in new_message:
-            await channel.send("Natural selection is the process whereby organisms better adapted to their environment tend to survive and produce more offspring")
+            await channel.send("is the process whereby organisms better adapted to their environment tend to survive and produce more offspring")
         
         if 'whats' in new_message and '8ball' in new_message:
             await channel.send("8bol")
