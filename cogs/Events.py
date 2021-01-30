@@ -3,6 +3,7 @@ from discord.ext import commands
 import random
 import json
 import re
+from pysyllables import get_syllable_count
 
 def remove_symbol(message):
     #list of chars to remove
@@ -15,6 +16,25 @@ def remove_symbol(message):
     
     return message
 
+def remove_symbol_no_space(message):
+    #list of chars to remove
+    badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
+    '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’"]
+
+    for symbol in badCharsList:
+        if symbol in message:
+            message = message.replace(symbol,"")
+    
+    return message
+
+def remove_string(lst, message):
+    messageList = message.strip().split(" ")
+    for i in messageList:
+        lst.remove(i)
+    return lst
+
+
+
 
 #List of f o r b i d d e n words
 with open('badWords.json', 'r') as f:
@@ -23,6 +43,47 @@ with open('badWords.json', 'r') as f:
 #List of w characters
 with open('wList.json', 'r', encoding='utf-8') as f:
     wList = json.load(f)
+
+#FIXME: DELETE?
+def Diff(li1, li2):
+    return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))
+
+
+# def format_haiku(wordList, target=None):
+#     #target = 5 if not target else target
+#     final = ""
+#     phrase = ""
+#     count = 0
+#     #count < target and word and len(wordList) > 0
+#     if len(wordList) > 0 and count < target and wordList[0]:
+#         currentWord = wordList[0]
+#         #word = re.sub(currentWord, "", word, count=1)
+#         wordList.remove(currentWord)
+#         final += format_haiku(wordList, target - 1)
+#         final += currentWord + " "
+#         print(phrase)
+#         if get_syllable_count(final) == 5 or get_syllable_count(final) == 7:
+#             return final
+
+#     return final
+
+def format_haiku(lst, target=None):
+    target = 5 if not target else target
+    final = ""
+    sylCount = 0
+    for i in range(0,target):
+        word = lst[i]
+        sylCount += get_syllable_count(word)
+        
+        if (sylCount > target):
+            break
+        
+        final += word + " "
+    return final[0: len(final) - 1]
+        
+
+
+
 
 class Events(commands.Cog):
     """No commands here no point in going here."""
@@ -57,6 +118,7 @@ class Events(commands.Cog):
         complicatedUwUs = [s for s in re.findall(r'\S\s*[Ww]\s*\S', message.content.lower())]
         complicatedUwUs = [s.replace(' ', '') for s in complicatedUwUs]
         nonEnglish = [s for s in re.findall(r'[^\s\\][^\s\\][^\s\\]', new_message)]
+        combinations = [s for s in re.findall(r"\S[^\s\\]\S", message.content.lower())]
         #(?i)[А-ЯЁ]
         for n, i in enumerate(ws):
                 for m, j in enumerate(complicatedUwUs):
@@ -74,9 +136,13 @@ class Events(commands.Cog):
         set_nonEnglish = set(nonEnglish)
         nonEnlish_not_in_set = list(set_nonEnglish - set(combinedList))
         combinedList = ws + nonEnlish_not_in_set
+        set_combinations = set(combinations)
+        combinedListCopy = combinedList
+        combinations_not_in_set = list(set_combinations - set(combinedListCopy))
+        combinedList = combinations + combinations_not_in_set
         
         #.find(lambda m: m.author.id == message.author.id)
-        if self.i < 3 and message.author.id != self.bot.user:
+        if self.i < 3 and message.author.id != self.bot:
             self.lastThreeContent += message.content
             self.i = self.i + 1
         if self.i == 3:
@@ -84,10 +150,7 @@ class Events(commands.Cog):
             self.lastThreeContent = ""
             self.i = 0
         
-        combinations = [s for s in re.findall(r"\S[^\s\\]\S", message.content.lower())]
-        set_combinations = set(combinations)
-        set_combinations_not_in_set = list(set_combinations - set(combinedList))
-        combinedList = combinations + set_combinations_not_in_set
+        
         list_of_ws = wList["wList"]["ws"]
         for word in combinedList:
             if len(word) > 2:
@@ -103,9 +166,40 @@ class Events(commands.Cog):
         
         if uwuCount > 0:
             SocialCredit = self.bot.get_cog('SocialCredit')
-            print(f"removed {uwuCount} uwus")
             await SocialCredit.remove_points(author_id, guild_id, uwuCount, message)
             uwuCount = 0
+        
+        #Haiku
+        wordList = remove_symbol_no_space(message.content).strip().split(" ")
+        print(wordList)
+        syllableCount = 0
+        for word in wordList:
+            syllableCount += get_syllable_count(word)
+        print(syllableCount)
+        if syllableCount == 17:
+            firstFiveSyllables = format_haiku(wordList, 5)
+            wordList = remove_string(wordList, firstFiveSyllables)
+            print(f"wordList = {wordList}")
+            sevenSyllables = format_haiku(wordList, 7)
+            wordList = remove_string(wordList, sevenSyllables)
+            lastFiveSyllables = format_haiku(wordList, 5)
+
+            #Create embed
+            color = 0xC51D55
+            embed = discord.Embed(color=color)
+            embed.set_author(name="A Haiku:")
+            test = '\u200b'
+            embed.add_field(
+                name=f'{test}',
+                value=f"*{firstFiveSyllables}\n\n{sevenSyllables}\n\n{lastFiveSyllables}*",
+                inline=False,
+            )
+            embed.set_footer(text=f"-{message.author.display_name}")
+            await channel.send(embed=embed)
+            
+            
+
+
 
         
         for word in badWordsList['badWords']['words']:
