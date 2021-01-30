@@ -19,7 +19,7 @@ def remove_symbol(message):
 def remove_symbol_no_space(message):
     #list of chars to remove
     badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
-    '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’"]
+    '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’", "\\n"]
 
     for symbol in badCharsList:
         if symbol in message:
