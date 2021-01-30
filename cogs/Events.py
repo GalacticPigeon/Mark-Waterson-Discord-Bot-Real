@@ -196,10 +196,6 @@ class Events(commands.Cog):
             )
             embed.set_footer(text=f"-{message.author.display_name}")
             await channel.send(embed=embed)
-            
-            
-
-
 
         
         for word in badWordsList['badWords']['words']:
