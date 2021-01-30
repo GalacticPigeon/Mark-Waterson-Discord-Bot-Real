@@ -44,10 +44,7 @@ with open('badWords.json', 'r') as f:
 with open('wList.json', 'r', encoding='utf-8') as f:
     wList = json.load(f)
 
-#FIXME: DELETE?
-def Diff(li1, li2):
-    return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))
-
+contractions = ["werent", "mightve", "doesnt", "haiku", "haikus"]
 
 # def format_haiku(wordList, target=None):
 #     #target = 5 if not target else target
@@ -72,8 +69,18 @@ def format_haiku(lst, target=None):
     final = ""
     sylCount = 0
     for i in range(0,target):
-        word = lst[i]
-        sylCount += get_syllable_count(word)
+        try:
+            word = lst[i]
+        except Exception as e:
+            pass
+        
+        try:
+            sylCount += get_syllable_count(word)
+        except Exception as e:
+            if word in contractions:
+                sylCount += 2
+            else:
+                sylCount += 1
         
         if (sylCount > target):
             break
@@ -174,7 +181,14 @@ class Events(commands.Cog):
         print(wordList)
         syllableCount = 0
         for word in wordList:
-            syllableCount += get_syllable_count(word)
+            try:
+                syllableCount += get_syllable_count(word)
+            except Exception as e:
+                if word in contractions:
+                    syllableCount += 2
+                else:
+                    syllableCount += 1
+
         print(syllableCount)
         if syllableCount == 17:
             firstFiveSyllables = format_haiku(wordList, 5)
