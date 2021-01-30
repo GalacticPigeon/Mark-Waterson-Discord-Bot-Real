@@ -96,7 +96,7 @@ def format_haiku(lst, target=None):
             if word in contractions:
                 sylCount += 2
             else:
-                syllables(word)
+                sylCount += syllables(word)
         
         if (sylCount > target):
             break
@@ -203,7 +203,7 @@ class Events(commands.Cog):
                 if word in contractions:
                     syllableCount += 2
                 else:
-                    syllables(word)
+                    syllableCount += syllables(word)
 
         print(syllableCount)
         if syllableCount == 17:
