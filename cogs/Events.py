@@ -33,7 +33,23 @@ def remove_string(lst, message):
         lst.remove(i)
     return lst
 
-
+def syllables(word):
+    #referred from stackoverflow.com/questions/14541303/count-the-number-of-syllables-in-a-word
+    count = 0
+    vowels = 'aeiouy'
+    word = word.lower()
+    if word[0] in vowels:
+        count +=1
+    for index in range(1,len(word)):
+        if word[index] in vowels and word[index-1] not in vowels:
+            count +=1
+    if word.endswith('e'):
+        count -= 1
+    if word.endswith('le'):
+        count += 1
+    if count == 0:
+        count += 1
+    return count
 
 
 #List of f o r b i d d e n words
@@ -44,7 +60,7 @@ with open('badWords.json', 'r') as f:
 with open('wList.json', 'r', encoding='utf-8') as f:
     wList = json.load(f)
 
-contractions = ["werent", "mightve", "doesnt", "haiku", "haikus"]
+contractions = ["werent", "mightve", "doesnt", "haiku", "haikus", "fuckass"]
 
 # def format_haiku(wordList, target=None):
 #     #target = 5 if not target else target
@@ -80,7 +96,7 @@ def format_haiku(lst, target=None):
             if word in contractions:
                 sylCount += 2
             else:
-                sylCount += 1
+                syllables(word)
         
         if (sylCount > target):
             break
@@ -187,7 +203,7 @@ class Events(commands.Cog):
                 if word in contractions:
                     syllableCount += 2
                 else:
-                    syllableCount += 1
+                    syllables(word)
 
         print(syllableCount)
         if syllableCount == 17:
