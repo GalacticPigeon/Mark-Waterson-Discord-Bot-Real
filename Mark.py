@@ -35,10 +35,10 @@ status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently faci
 async def create_db_pool():
     #await asyncpg.connect("postgres://dhluktlzulnova:89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a@ec2-23-23-36-227.compute-1.amazonaws.com:5432/dao8a0cgglvabc?ssl=true")
     try:
-        client.pg_con = await asyncpg.create_pool(database="testDB", user="postgres", password="Q.sweaty42")
-        # client.pg_con = await asyncpg.create_pool(database="dao8a0cgglvabc", user="dhluktlzulnova",
-        # password="89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a",
-        # host="ec2-23-23-36-227.compute-1.amazonaws.com")
+        #client.pg_con = await asyncpg.create_pool(database="testDB", user="postgres", password="Q.sweaty42")
+        client.pg_con = await asyncpg.create_pool(database="dao8a0cgglvabc", user="dhluktlzulnova",
+        password="89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a",
+        host="ec2-23-23-36-227.compute-1.amazonaws.com")
     except Exception as e:
         raise e
 #Tasks
