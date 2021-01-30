@@ -13,6 +13,7 @@ import re
 import traceback
 from discord.ext import commands, tasks
 from discord import member
+from discord import Webhook, AsyncWebhookAdapter
 from discord.utils import get
 from itertools import cycle
 from itertools import product
@@ -34,10 +35,10 @@ status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently faci
 async def create_db_pool():
     #await asyncpg.connect("postgres://dhluktlzulnova:89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a@ec2-23-23-36-227.compute-1.amazonaws.com:5432/dao8a0cgglvabc?ssl=true")
     try:
-        # client.pg_con = await asyncpg.create_pool(database="testDB", user="postgres", password="Q.sweaty42")
-        client.pg_con = await asyncpg.create_pool(database="dao8a0cgglvabc", user="dhluktlzulnova",
-        password="89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a",
-        host="ec2-23-23-36-227.compute-1.amazonaws.com")
+        client.pg_con = await asyncpg.create_pool(database="testDB", user="postgres", password="Q.sweaty42")
+        # client.pg_con = await asyncpg.create_pool(database="dao8a0cgglvabc", user="dhluktlzulnova",
+        # password="89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a",
+        # host="ec2-23-23-36-227.compute-1.amazonaws.com")
     except Exception as e:
         raise e
 #Tasks
@@ -110,6 +111,11 @@ async def reload(ctx, cog):
         print(f"{cog} cannot be loaded:")
         raise e
 
+@client.command(hidden=True)
+async def channel(ctx):
+    print(ctx.channel.id)
+    await ctx.channel.purge(limit=1)
+
 #Will make user say whatever text is entered
 @client.command()
 async def usersay(ctx, member: discord.Member = None, *, message):
@@ -125,10 +131,8 @@ async def usersay(ctx, member: discord.Member = None, *, message):
     memberName = member.display_name # Member nickname/name
     userName = str(ctx.message.author) # Member acutal name + member tag
     avatar = member.avatar_url # Member avatar
-    #message = "SHOULD NOT SEE THIS" if not message else message
     messageStrLower = remove_symbol(message.lower())
     
-
     #Get rid of user message
     #note delete_afer(5)
     try:
@@ -158,7 +162,7 @@ async def usersay(ctx, member: discord.Member = None, *, message):
     await webhook.delete()
 
 @usersay.error
-async def blackjack_error(self, ctx, error):
+async def usersay_error(self, ctx, error):
     if isinstance(error, commands.BotMissingPermissions):
         msg = ":x: {:}".format(error)
         await ctx.send(msg)
@@ -170,5 +174,8 @@ async def blackjack_error(self, ctx, error):
 #Run database
 client.loop.run_until_complete(create_db_pool())
 
-
+#Main bot key
 client.run('Njk3MTEyMjE5MTYyMjQ3MTc5.XoyiWA.cn02llCxi_bU427lSMva1ZKzACY')
+
+#Test bot key
+#client.run("NzY4MTI2NzkyMTYxOTUxNzY0.X4770g.hM40q3DunC92e0aPbzMqJe6kvas")
