@@ -19,7 +19,7 @@ def remove_symbol(message):
 def remove_symbol_no_space(message):
     #list of chars to remove
     badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
-    '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’", "\\n"]
+    '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’"]
 
     for symbol in badCharsList:
         if symbol in message:
@@ -28,7 +28,7 @@ def remove_symbol_no_space(message):
     return message
 
 def remove_string(lst, message):
-    messageList = message.strip().split(" ")
+    messageList = [s for s in re.split(r"\W+", message)]
     for i in messageList:
         lst.remove(i)
     return lst
@@ -38,17 +38,20 @@ def syllables(word):
     count = 0
     vowels = 'aeiouy'
     word = word.lower()
-    if word[0] in vowels:
-        count +=1
-    for index in range(1,len(word)):
-        if word[index] in vowels and word[index-1] not in vowels:
+    try:
+        if word[0] in vowels:
             count +=1
-    if word.endswith('e'):
-        count -= 1
-    if word.endswith('le'):
-        count += 1
-    if count == 0:
-        count += 1
+        for index in range(1,len(word)):
+            if word[index] in vowels and word[index-1] not in vowels:
+                count +=1
+        if word.endswith('e'):
+            count -= 1
+        if word.endswith('le'):
+            count += 1
+        if count == 0:
+            count += 1
+    except IndexError:
+        pass
     return count
 
 
@@ -193,7 +196,7 @@ class Events(commands.Cog):
             uwuCount = 0
         
         #Haiku
-        wordList = remove_symbol_no_space(message.content).strip().split(" ")
+        wordList = [s for s in re.split(r"\W+", remove_symbol_no_space(message.content))]
         print(wordList)
         syllableCount = 0
         for word in wordList:
