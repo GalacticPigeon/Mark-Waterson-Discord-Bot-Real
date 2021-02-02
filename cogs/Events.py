@@ -16,14 +16,19 @@ def remove_symbol(message):
     
     return message
 
-def remove_symbol_no_space(message):
+def sanitize_input(message):
     #list of chars to remove
     badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
-    '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’"]
+    '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’", "@", "*"]
 
     for symbol in badCharsList:
         if symbol in message:
-            message = message.replace(symbol,"")
+            if symbol != '-':
+                message = message.replace(symbol," ")
+            elif symbol.isnumeric():
+                pass
+            else:
+                message = message.replace(symbol, " ")
     
     return message
 
@@ -63,7 +68,7 @@ with open('badWords.json', 'r') as f:
 with open('wList.json', 'r', encoding='utf-8') as f:
     wList = json.load(f)
 
-contractions = ["werent", "mightve", "doesnt", "haiku", "haikus", "fuckass"]
+contractions = ["wouldnt", "werent", "mightve", "doesnt", "haiku", "haikus", "fuckass"]
 
 # def format_haiku(wordList, target=None):
 #     #target = 5 if not target else target
@@ -196,7 +201,8 @@ class Events(commands.Cog):
             uwuCount = 0
         
         #Haiku
-        wordList = [s for s in re.split(r"\W+", remove_symbol_no_space(message.content))]
+        wordList = [s for s in re.split(r"\W+|\d+", sanitize_input(message.content))]
+        wordList = list(filter(None, wordList))
         print(wordList)
         syllableCount = 0
         for word in wordList:
