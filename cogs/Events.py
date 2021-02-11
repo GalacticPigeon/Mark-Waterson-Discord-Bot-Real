@@ -5,6 +5,10 @@ import json
 import re
 from pysyllables import get_syllable_count
 
+
+badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
+'<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’", "@", "*"]
+
 def remove_symbol(message):
     #list of chars to remove
     badCharsList = [';', ' ', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
@@ -18,22 +22,24 @@ def remove_symbol(message):
 
 def sanitize_input(message):
     #list of chars to remove
-    badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
-    '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’", "@", "*"]
+    # badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
+    # '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’", "@", "*"]
+    if (type(message) != 'list'):
+        for symbol in badCharsList:
+            if symbol in message:
+                if symbol.isnumeric():
+                    pass
+                else:
+                    message = message.replace(symbol, symbol + " ")
+    else:
+        message = [message.replace(s, s + " ") for s in badCharsList]
 
-    for symbol in badCharsList:
-        if symbol in message:
-            if symbol != '-':
-                message = message.replace(symbol," ")
-            elif symbol.isnumeric():
-                pass
-            else:
-                message = message.replace(symbol, " ")
-    
     return message
 
 def remove_string(lst, message):
-    messageList = [s for s in re.split(r"\W+", message)]
+    messageList = [s for s in re.split(r"\s+", message)]
+    sanitize_input(message)
+    messageList = list(filter(None, messageList))
     for i in messageList:
         lst.remove(i)
     return lst
@@ -68,52 +74,53 @@ with open('badWords.json', 'r') as f:
 with open('wList.json', 'r', encoding='utf-8') as f:
     wList = json.load(f)
 
-contractions = ["wouldnt", "werent", "mightve", "doesnt", "haiku", "haikus", "fuckass"]
+with open('exclusions.json', 'r') as f:
+    exclusions = json.load(f)
 
-# def format_haiku(wordList, target=None):
-#     #target = 5 if not target else target
-#     final = ""
-#     phrase = ""
-#     count = 0
-#     #count < target and word and len(wordList) > 0
-#     if len(wordList) > 0 and count < target and wordList[0]:
-#         currentWord = wordList[0]
-#         #word = re.sub(currentWord, "", word, count=1)
-#         wordList.remove(currentWord)
-#         final += format_haiku(wordList, target - 1)
-#         final += currentWord + " "
-#         print(phrase)
-#         if get_syllable_count(final) == 5 or get_syllable_count(final) == 7:
-#             return final
-
-#     return final
-
-def format_haiku(lst, target=None):
-    target = 5 if not target else target
-    final = ""
+def format_haiku(lst):
+    firstFive = []
+    middleSeven = []
+    lastFive = []
+    final = [[], [], []]
     sylCount = 0
-    for i in range(0,target):
-        try:
-            word = lst[i]
-        except Exception as e:
-            pass
-        
-        try:
-            sylCount += get_syllable_count(word)
-        except Exception as e:
-            if word in contractions:
-                sylCount += 2
-            else:
-                sylCount += syllables(word)
-        
-        if (sylCount > target):
-            break
-        
-        final += word + " "
-    return final[0: len(final) - 1]
-        
+    k = 0
+    i = 0
+    for j in [5,7,5]:
+        sylCount = 0
+        while sylCount < j:
+            try:
+                word = lst[k]
+            except Exception as e:
+                pass
+            sylCount += get_syl_count(remove_symbol(word))
+            #This handles the case where the sum of syllables is 17
+            #but the correct number of syllables per line cannot be formed
+            #with the words
+            if (sylCount > j):
+                return None
+            final[i].append(word)
+            k += 1
+        i += 1
+    return final
 
+def get_syl_count(word):
+    sylCount = 0
+    word = remove_symbol(word)
+    try:
+        syl_in_word = get_syllable_count(word)
+        sylCount += syl_in_word
+        if syl_in_word == None:
+            raise Exception
+    except Exception as e:
+        if word.lower() in exclusions['exclusions']:
+            sylCount += exclusions['exclusions'][word]
+        else:
+            sylCount += syllables(word)
+    return sylCount
 
+def listToStr(lst):
+    string = " ".join([elem for elem in lst])
+    return string
 
 
 class Events(commands.Cog):
@@ -132,8 +139,6 @@ class Events(commands.Cog):
 
         author_id = str(message.author.id)
         guild_id = str(message.guild.id)
-        
-
 
         new_message = remove_symbol(message.content.lower())
 
@@ -201,40 +206,35 @@ class Events(commands.Cog):
             uwuCount = 0
         
         #Haiku
-        wordList = [s for s in re.split(r"\W+|\d+", sanitize_input(message.content))]
+        #msg = []
+        wordList = [s for s in re.split(r"\s+|\d+", message.content)]
+        #wordList = [s for s in re.split(r"[^a-zA-Z0-9_'’]+|\d+", message.content, re.I)]
         wordList = list(filter(None, wordList))
+        wordList = sanitize_input(wordList)
         print(wordList)
         syllableCount = 0
         for word in wordList:
-            try:
-                syllableCount += get_syllable_count(word)
-            except Exception as e:
-                if word in contractions:
-                    syllableCount += 2
-                else:
-                    syllableCount += syllables(word)
+            syllableCount += get_syl_count(word)
 
         print(syllableCount)
         if syllableCount == 17:
-            firstFiveSyllables = format_haiku(wordList, 5)
-            wordList = remove_string(wordList, firstFiveSyllables)
-            print(f"wordList = {wordList}")
-            sevenSyllables = format_haiku(wordList, 7)
-            wordList = remove_string(wordList, sevenSyllables)
-            lastFiveSyllables = format_haiku(wordList, 5)
+            haiku = format_haiku(wordList)
+            if (haiku is not None):
+                firstFiveSyllables = listToStr(haiku[0])
+                sevenSyllables = listToStr(haiku[1])
+                lastFiveSyllables = listToStr(haiku[2])
 
-            #Create embed
-            color = 0xC51D55
-            embed = discord.Embed(color=color)
-            embed.set_author(name="A Haiku:")
-            test = '\u200b'
-            embed.add_field(
-                name=f'{test}',
-                value=f"*{firstFiveSyllables}\n\n{sevenSyllables}\n\n{lastFiveSyllables}*",
-                inline=False,
-            )
-            embed.set_footer(text=f"-{message.author.display_name}")
-            await channel.send(embed=embed)
+                #Create embed
+                color = 0xC51D55
+                embed = discord.Embed(color=color)
+                embed.set_author(name="A Haiku:")
+                embed.add_field(
+                    name='\u200b',
+                    value=f"*{firstFiveSyllables}\n\n{sevenSyllables}\n\n{lastFiveSyllables}*",
+                    inline=False,
+                )
+                embed.set_footer(text=f"-{message.author.display_name}")
+                await channel.send(embed=embed)
 
         
         for word in badWordsList['badWords']['words']:
@@ -269,6 +269,32 @@ class Events(commands.Cog):
 
         
         #await bot.process_commands(message)
+    
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    async def override(self, ctx, word, sylCount):
+        with open('exclusions.json', 'r') as f:
+            exclusions = json.load(f)
+        word = str(word).lower()
+        sylCount = int(sylCount)
+        try:
+            if word in exclusions['exclusions'] and exclusions['exclusions'][word] == sylCount:
+                await ctx.send("Word already in exclusions!")
+                return
+            exclusions["exclusions"][word] = sylCount
+            await ctx.send("Successfully added exception!")
+        except Exception as e:
+            await ctx.send("Failed to add word as an exception!")
+            raise e
+        
+        with open('exclusions.json', 'w') as f:
+            json.dump(exclusions, f, indent=4)
+    
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    async def count(self, ctx, word):
+        count = get_syl_count(word)
+        await ctx.send(f"{word} has {count} syllables!")
 
 def setup(bot):
     bot.add_cog(Events(bot))
