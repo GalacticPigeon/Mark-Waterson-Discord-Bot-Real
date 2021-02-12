@@ -270,11 +270,13 @@ class Events(commands.Cog):
         
         #await bot.process_commands(message)
     
+    #TODO: ADD ABILITY TO REMOVE WORDS
     @commands.command(hidden=True)
     @commands.is_owner()
     async def override(self, ctx, word, sylCount):
         with open('exclusions.json', 'r') as f:
             exclusions = json.load(f)
+            
         word = str(word).lower()
         sylCount = int(sylCount)
         try:
@@ -283,18 +285,24 @@ class Events(commands.Cog):
                 return
             exclusions["exclusions"][word] = sylCount
             await ctx.send("Successfully added exception!")
+            
+            with open('exclusions.json', 'w') as f:
+                json.dump(exclusions, f, indent=4)
         except Exception as e:
             await ctx.send("Failed to add word as an exception!")
             raise e
-        
-        with open('exclusions.json', 'w') as f:
-            json.dump(exclusions, f, indent=4)
     
     @commands.command(hidden=True)
     @commands.is_owner()
     async def count(self, ctx, word):
-        count = get_syl_count(word)
-        await ctx.send(f"{word} has {count} syllables!")
+        with open('exclusions.json', 'r') as f:
+            exclusions = json.load(f)
+        
+        if word in exclusions['exclusions']:
+            await ctx.send(f"{word} has {exclusions['exclusions'][word]}")
+        else:
+            count = get_syl_count(word)
+            await ctx.send(f"{word} has {count} syllables!")
 
 def setup(bot):
     bot.add_cog(Events(bot))
