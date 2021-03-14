@@ -4,8 +4,6 @@ import random
 import json
 import re
 from pysyllables import get_syllable_count
-from num2words import num2words
-
 
 
 badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
@@ -22,9 +20,11 @@ def remove_symbol(message):
     
     return message
 
-
 def sanitize_input(message):
-    if (type(message) != 'list'): #If variable type is not a list
+    #list of chars to remove
+    # badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
+    # '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’", "@", "*"]
+    if (type(message) != 'list'):
         for symbol in badCharsList:
             if symbol in message:
                 if symbol.isnumeric():
@@ -93,12 +93,11 @@ def format_haiku(lst):
             except Exception as e:
                 pass
             sylCount += get_syl_count(remove_symbol(word))
-            # This handles the case where the sum of syllables is 17
-            # but the correct number of syllables per line cannot be formed
-            # with the words
+            #This handles the case where the sum of syllables is 17
+            #but the correct number of syllables per line cannot be formed
+            #with the words
             if (sylCount > j):
                 return None
-            
             final[i].append(word)
             k += 1
         i += 1
@@ -106,31 +105,17 @@ def format_haiku(lst):
 
 def get_syl_count(word):
     sylCount = 0
-    syl_in_word = ""
     word = remove_symbol(word)
     try:
-        if word.isnumeric():
-            numList = [s for s in re.split(r"\s+|-+", num2words(word))]
-            for string in numList:
-                sylCount += get_syl_count(string)
-            print(f"sylCount = {sylCount}")
-            #this is assigned to avoid calling an exception during recursion
-            syl_in_word = True
-        else:
-            syl_in_word = get_syllable_count(word)
-            sylCount = syl_in_word
-
-        #Unsure why I have to raise an error here
-        #Probably has something to do with the try catch
-        if not syl_in_word:
+        syl_in_word = get_syllable_count(word)
+        sylCount += syl_in_word
+        if syl_in_word == None:
             raise Exception
-
-    except Exception:
+    except Exception as e:
         if word.lower() in exclusions['exclusions']:
-            sylCount = exclusions['exclusions'][word]
+            sylCount += exclusions['exclusions'][word]
         else:
             sylCount += syllables(word)
-
     return sylCount
 
 def listToStr(lst):
@@ -222,7 +207,7 @@ class Events(commands.Cog):
         
         #Haiku
         #msg = []
-        wordList = [s for s in re.split(r"\s+", message.content)]
+        wordList = [s for s in re.split(r"\s+|\d+", message.content)]
         #wordList = [s for s in re.split(r"[^a-zA-Z0-9_'’]+|\d+", message.content, re.I)]
         wordList = list(filter(None, wordList))
         wordList = sanitize_input(wordList)
