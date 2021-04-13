@@ -30,27 +30,6 @@ class Commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    
-    
-    # COMMANDS
-    #Help command
-    # @commands.command(pass_context = True)
-    # async def help(self,ctx):
-    #     author = ctx.message.author
-
-    #     embed = discord.Embed(
-    #         color = discord.Color.blurple()
-    #     )
-    #     embed.set_author(name="Mark Waterson's friendly list of commands")
-    #     embed.add_field(name='_version', value = 'Checks the fucking version. Do I even need to include this in help?', inline=False)
-    #     embed.add_field(name='_ping', value="If you have to ask I'm removing your computer privelleges",inline=False)
-    #     embed.add_field(name='_ask', value = "Ask Mark a question and he will answer you", inline = False)
-    #     embed.add_field(name='_john', value = "John", inline = False)
-    #     embed.add_field(name='_usersay', value = "Type the command, @ someone, and type a phrase. Will make user say whatever you enter", inline = False)
-    #     embed.add_field(name='_poop', value = "This is a command", inline = False)
-        
-    #     await ctx.send(embed=embed)
-
     #Version
     @commands.command()
     async def version(self, ctx):
@@ -77,6 +56,20 @@ class Commands(commands.Cog):
         noList = responseList['answers']['noList']
         
         #Print responses
+
+        try:
+            lst = [s for s in re.split(r'[^\d\W]+', question)]
+            qstr = ''.join(str(e) for e in lst)
+            qstr = qstr.replace('^', '**')
+            lst = [s for s in re.split(r'[.?\-",]+', qstr)]
+            lst = list(filter(None, lst))
+            print(f"QSTR IS: {qstr}")
+            qstr = ''.join(str(e) for e in lst)
+            answer = eval(qstr)
+            await ctx.send(f'Question: {question}\nAnswer: {answer}')
+            return
+        except:
+            pass
 
         if hasNumbers(question):
             await ctx.send(f'Question: {question}\nAnswer: Don’t count on it.')
