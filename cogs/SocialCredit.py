@@ -14,14 +14,15 @@ class SocialCredit(commands.Cog):
         self.bot = bot
 
     async def remove_points(self, author_id: str, guild_id: str, count, message):
-        user = await self.bot.pg_con.fetch("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
-        num_uwus = user[0]['uwus']
-        if num_uwus <= 0:
-            return
-        if count > num_uwus:
-            count = num_uwus
-        user = await self.bot.pg_con.fetchrow("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
-        await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", user['uwus'] - count, author_id, guild_id)
+        if author_id != self.bot.user:
+            user = await self.bot.pg_con.fetch("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
+            num_uwus = user[0]['uwus']
+            if num_uwus <= 0:
+                return
+            if count > num_uwus:
+                count = num_uwus
+            user = await self.bot.pg_con.fetchrow("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
+            await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", user['uwus'] - count, author_id, guild_id)
     
     async def change_lvl(self, user):
         curr_uwus = user['uwus']
@@ -62,11 +63,19 @@ class SocialCredit(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author == self.bot.user or message.author.id == 697112219162247179:
+        if message.author == self.bot.user or message.author.id == 697112219162247179 or message.author.bot:
             return
 
         author_id = str(message.author.id)
         guild_id = str(message.guild.id)
+
+        if message.author.bot:
+            try:
+                await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", 10, author_id, guild_id)
+                await self.bot.pg_con.execute("UPDATE users SET sc = $1 WHERE user_id = $2 AND guild_id = $3", 1, author_id, guild_id)
+            except Exception as e:
+                raise e
+                pass
 
         user = await self.bot.pg_con.fetch("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
         
