@@ -105,7 +105,17 @@ class Gambling(commands.Cog):
 
         user = await self.bot.pg_con.fetch("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", member_id, guild_id)
 
-        if not user:
+        #If user is mark
+        if member.id == 697112219162247179:
+            embed = discord.Embed(
+            color = discord.Color.magenta()
+            )
+            embed.set_author(name=member.display_name, icon_url=member.avatar_url)
+            embed.add_field(name=f"UwUs - {member.display_name}", value="infinite", inline = False)
+            embed.add_field(name=f"Social Credit - {member.display_name}", value="beyond human comprehension", inline = False)
+            await ctx.channel.send(embed=embed)
+        #If user is not in database
+        elif not user:
             embed = discord.Embed(
                 color = discord.Color.light_grey()
             )
@@ -113,6 +123,7 @@ class Gambling(commands.Cog):
             embed.add_field(name=f'Social Credit - {member.display_name}', value="No Social Credit", inline = False)
             await ctx.channel.send(embed=embed)
         else:
+            #If user has positive sc
             if user[0]['sc'] > 0:
                 embed = discord.Embed(
                     color = discord.Color.gold()
@@ -120,6 +131,7 @@ class Gambling(commands.Cog):
                 embed.set_author(name=member.display_name, icon_url=member.avatar_url)
                 embed.add_field(name=f"UwUs - {member.display_name}", value=user[0]['uwus'], inline=False)
                 embed.add_field(name=f"Social Credit - {member.display_name}", value=user[0]['sc'], inline=False)
+            #If user has social credit
             elif user[0]['sc'] == 0:
                 embed = discord.Embed(
                     color = discord.Color.light_grey()
@@ -127,6 +139,7 @@ class Gambling(commands.Cog):
                 embed.set_author(name=member.display_name, icon_url=member.avatar_url)
                 embed.add_field(name=f"UwUs - {member.display_name}", value=user[0]['uwus'], inline = False)
                 embed.add_field(name=f"Social Credit - {member.display_name}", value=user[0]['sc'], inline = False)
+            #Every other case
             else:
                 embed = discord.Embed(
                     color = discord.Color.red()
@@ -139,7 +152,6 @@ class Gambling(commands.Cog):
     
     winCount = 0
     @commands.command(aliases=['toss', 'ct', 'flip'])
-    @commands.cooldown(1, 7, commands.BucketType.user)
     async def cointoss(self, ctx, heads_or_tails: str = None, bet_amount: str = None):
         """Toss a coin and make a bet! You could win big! usage: `_cointoss [heads or tails] [amount]`"""
         author_id = str(ctx.author.id) 
@@ -251,18 +263,43 @@ class Gambling(commands.Cog):
         if (num_uwus < 0):
             amount = random.randint(abs(num_uwus), abs(num_uwus) + 10)
         else:
-            amount = random.randint(30, 120)
+            amount = random.randint(30, 100)
         
         await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", 
         user[0]['uwus'] + amount, author_id, guild_id)
         await ctx.send(f"**{ctx.author.display_name}**, Here is your daily allowance of **{amount}** UwUs from ***__Mark Waterson__***")
     
 
+    @commands.command(aliases=["lb"])
+    async def leaderboard(self, ctx):
+        """See who has the most Social Credit with this command! usage: `_leaderboard`"""
+        guild_id = str(ctx.guild.id)
+        limit = 5
 
+        user = await self.bot.pg_con.fetch("SELECT user_id, guild_id, sc FROM users WHERE guild_id = $1 ORDER BY sc DESC LIMIT $2", guild_id, limit)
+        print(f"\n{user}\n")
+        leaders = []
+        embed = discord.Embed(
+            color = discord.Color.gold(),
+        )
+        member = await self.bot.fetch_user(user[0]["user_id"])
+        embed.set_author(name=f"Top User: {member.display_name}", icon_url=member.avatar_url)
+        for i in range(0,limit):
+            person = user[i]["user_id"]
+            person_credit = user[i]["sc"]
+            try:
+                member = await self.bot.fetch_user(person)
+            except Exception as e:
+                pass
+
+            embed.add_field(name=f"Social Credit - {member.display_name}", value=user[i]['sc'], inline=False) 
+        
+        
+        await ctx.channel.send(embed=embed)
+    
     #BLACKJACK
     @commands.command(aliases=["bj"])
     @commands.bot_has_permissions(manage_emojis=True, manage_messages=True)
-    @commands.cooldown(1, 10, commands.BucketType.user)
     async def blackjack(self, ctx, bet=None):
         """This is blackjack what did you expect
         usage: `_blackjack [amount]`"""
@@ -367,13 +404,21 @@ class Gambling(commands.Cog):
                 
                 result = await self.check_result()
                 if result == "WIN":
-                    color = discord.Color.green()
+                    if self.get_score(self.player) == 21:
+                        color = discord.Color.default()
+                        result = "YOU HAVE BLACKJACK\n YOU WIN"
+                    else:
+                        color = discord.Color.green()
                 elif result == "PUSH":
                     color = discord.Color.greyple()
                 else:
-                    color = discord.Color.red()
+                    if self.get_score(self.dealer) == 21:
+                        color = discord.Color.red()
+                        result = "MARK HAS BLACKJACK\n YOU LOSE HAHA"
+                    else:
+                        color = discord.Color.red()
                 
-                self.embed = self.update_ui(ctx, await self.check_result(), True, color)
+                self.embed = self.update_ui(ctx, result, True, color)
                 await self.msg.edit(embed=self.embed)
                 break
 
@@ -449,17 +494,17 @@ class Gambling(commands.Cog):
         if self.get_score(self.player, True) == 21:
             if self.get_score(self.dealer, True) == 21:
                 await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'], author_id, guild_id)
-                color = 1
+                color = discord.Color.greyple()
                 self.embed = self.update_ui(ctx_m, "BLACKJACK\n PUSH", True, color)
                 self.stop_flag = True
             else:
                 await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'] + self.bet * 2.5, 
                 self.author_id, self.guild_id)
-                color = True
+                color = discord.Color.default();
                 self.embed = self.update_ui(ctx_m, "YOU HAVE BLACKJACK\n YOU WIN", True, color)
                 self.stop_flag = True
         elif self.get_score(self.dealer, True) == 21:
-            color = False
+            color = discord.Color.red()
             self.embed = self.update_ui(ctx_m, "MARK HAS BLACKJACK\n YOU LOSE HAHA", True, color)
             self.stop_flag = True
     
