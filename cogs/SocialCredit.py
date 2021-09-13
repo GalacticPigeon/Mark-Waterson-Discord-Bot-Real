@@ -27,25 +27,21 @@ class SocialCredit(commands.Cog):
     async def change_lvl(self, user):
         curr_uwus = user['uwus']
         curr_social_credit = user['sc']
-        gain_function = round(-7E-27*(curr_social_credit ** 6) + 2E-21*(curr_social_credit ** 5) - 2E-16*(curr_social_credit ** 4) +
-                        1E-11*(curr_social_credit ** 3) - 3E-7*(curr_social_credit**2) + 0.0061*(curr_social_credit) + 4.1128)
-        remove_function = round(-7E-27*((curr_social_credit - 1) ** 6) + 2E-21*((curr_social_credit - 1) ** 5) - 2E-16*((curr_social_credit - 1) ** 4) +
-                        1E-11*((curr_social_credit - 1) ** 3) - 3E-7*((curr_social_credit - 1)**2) + 0.0061*(curr_social_credit - 1) + 4.1128)
+        gain_function = round(2.1003*(curr_social_credit ** 3)- 0.0025*(curr_social_credit ** 2) + 15.454 * (curr_social_credit) + 0.7534)
+        remove_function = round(2.1003*((curr_social_credit - 1) ** 3)- 0.0025*((curr_social_credit - 1) ** 2) + 15.454 * (curr_social_credit - 1) + 0.7534)
         count = 0
 
         if curr_uwus >= gain_function:
             while curr_uwus >= gain_function:
                 count = count + 1
-                gain_function = round(-7E-27*(curr_social_credit ** 6) + 2E-21*(curr_social_credit ** 5) - 2E-16*(curr_social_credit ** 4) +
-                        1E-11*(curr_social_credit ** 3) - 3E-7*(curr_social_credit**2) + 0.0061*(curr_social_credit) + 4.1128)
+                gain_function = round(2.1003*((curr_social_credit + count) ** 3)- 0.0025*((curr_social_credit + count) ** 2) + 15.454 * (curr_social_credit + count) + 0.7534)
 
             await self.bot.pg_con.execute("UPDATE users SET sc = $1 WHERE user_id = $2 AND guild_id = $3", curr_social_credit + count, user['user_id'], user['guild_id'])
             return count
-        elif curr_uwus < (remove_function):
-            while curr_uwus < (remove_function):
+        elif curr_uwus < (remove_function - 17):
+            while curr_uwus < (remove_function - 17):
                 count = count + 1
-                remove_function = round(-7E-27*((curr_social_credit - 1) ** 6) + 2E-21*((curr_social_credit - 1) ** 5) - 2E-16*((curr_social_credit - 1) ** 4) +
-                        1E-11*((curr_social_credit - 1) ** 3) - 3E-7*((curr_social_credit - 1)**2) + 0.0061*(curr_social_credit - 1) + 4.1128)
+                remove_function = round(2.1003*((curr_social_credit - count) ** 3)- 0.0025*((curr_social_credit - count) ** 2) + 15.454 * (curr_social_credit - count) + 0.7534)
 
             curr_social_credit = curr_social_credit - count
             await self.bot.pg_con.execute("UPDATE users SET sc = $1 WHERE user_id = $2 AND guild_id = $3", curr_social_credit, user['user_id'], user['guild_id'])
@@ -87,7 +83,7 @@ class SocialCredit(commands.Cog):
             await self.bot.pg_con.execute("INSERT INTO users (user_id, guild_id, uwus, sc) VALUES ($1, $2, 10, 1)", author_id, guild_id)
 
         def reward_uwus():
-            num = random.randint(0,500)
+            num = random.randint(0,70)
 
             if num == 0:
                 return True
@@ -96,7 +92,7 @@ class SocialCredit(commands.Cog):
         
         user = await self.bot.pg_con.fetchrow("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
         if reward_uwus():
-            num_uwus = random.randint(-100,400)
+            num_uwus = random.randint(-15,50)
             await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", user['uwus'] + num_uwus, author_id, guild_id)
             if num_uwus >= 0:
                 embed = discord.Embed(
