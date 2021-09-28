@@ -83,7 +83,7 @@ class SocialCredit(commands.Cog):
             await self.bot.pg_con.execute("INSERT INTO users (user_id, guild_id, uwus, sc) VALUES ($1, $2, 10, 1)", author_id, guild_id)
 
         def reward_uwus():
-            num = random.randint(0,700)
+            num = random.randint(0,70)
 
             if num == 0:
                 return True
@@ -93,6 +93,9 @@ class SocialCredit(commands.Cog):
         user = await self.bot.pg_con.fetchrow("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
         if reward_uwus():
             num_uwus = random.randint(-100,400)
+            award_many = random.randint(784584,884584)
+            if award_many == 784584:
+                num_uwus = award_many
             await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", user['uwus'] + num_uwus, author_id, guild_id)
             if num_uwus >= 0:
                 embed = discord.Embed(
