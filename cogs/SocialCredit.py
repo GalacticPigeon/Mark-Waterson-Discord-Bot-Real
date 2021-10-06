@@ -83,7 +83,7 @@ class SocialCredit(commands.Cog):
             await self.bot.pg_con.execute("INSERT INTO users (user_id, guild_id, uwus, sc) VALUES ($1, $2, 10, 1)", author_id, guild_id)
 
         def reward_uwus():
-            num = random.randint(0,70)
+            num = random.randint(0,0)
 
             if num == 0:
                 return True
