@@ -104,10 +104,12 @@ def format_haiku(lst):
         i += 1
     return final
 
+#Gets the syllable count for ONE word and returns it
 def get_syl_count(word):
     sylCount = 0
-    syl_in_word = ""
+    syl_in_word = False
     word = remove_symbol(word)
+    print(f"WORD IS HEY HEY LOOK WORD IS {word}")
     try:
         if word.isnumeric():
             numList = [s for s in re.split(r"\s+|-+", num2words(word))]
@@ -121,22 +123,29 @@ def get_syl_count(word):
             sylCount = syl_in_word
 
         #Unsure why I have to raise an error here
-        #Probably has something to do with the try catch
         if not syl_in_word:
             raise Exception
 
-    except Exception:
+    except Exception as BreakoutException:
+        sylCount = 0
+        print(f"THIS IS THE WEIRD CASE WORD {word}")      
         if word.lower() in exclusions['exclusions']:
             sylCount = exclusions['exclusions'][word]
         else:
             sylCount += syllables(word)
-
+    #typecast as a a bandaid instead of fixing this mess
+    sylCount = int(sylCount)
     return sylCount
 
 def listToStr(lst):
     string = " ".join([elem for elem in lst])
     return string
 
+async def isBlock(self, str):
+    if str == "_block":
+        return [50, str.author.id]
+    else:
+        return [10, str.author.id]
 
 class Events(commands.Cog):
     """No commands here no point in going here."""
@@ -154,7 +163,9 @@ class Events(commands.Cog):
 
         author_id = str(message.author.id)
         guild_id = str(message.guild.id)
+        # ctx = await bot.get_ctx(message)
 
+        # Gambling = self.bot.get_cog("Gambling")
         new_message = remove_symbol(message.content.lower())
 
         def isPalindrome(str):
@@ -220,18 +231,17 @@ class Events(commands.Cog):
             await SocialCredit.remove_points(author_id, guild_id, uwuCount, message)
             uwuCount = 0
         
-        #Haiku
+        #Haiku HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU HAIKU 
         #msg = []
         wordList = [s for s in re.split(r"\s+", message.content)]
-        #wordList = [s for s in re.split(r"[^a-zA-Z0-9_'’]+|\d+", message.content, re.I)]
         wordList = list(filter(None, wordList))
         wordList = sanitize_input(wordList)
-        print(wordList)
+        #print(wordList)
         syllableCount = 0
         for word in wordList:
             syllableCount += get_syl_count(word)
 
-        print(syllableCount)
+        #print(syllableCount)
         if syllableCount == 17:
             haiku = format_haiku(wordList)
             if (haiku is not None):
@@ -283,7 +293,6 @@ class Events(commands.Cog):
                 await channel.send('haram')
 
         
-        #await bot.process_commands(message)
     
     #TODO: ADD ABILITY TO REMOVE WORDS
     @commands.command(hidden=True)
