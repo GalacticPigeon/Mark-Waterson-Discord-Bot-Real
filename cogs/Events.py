@@ -109,13 +109,13 @@ def get_syl_count(word):
     sylCount = 0
     syl_in_word = False
     word = remove_symbol(word)
-    print(f"WORD IS HEY HEY LOOK WORD IS {word}")
+    #print(f"WORD IS HEY HEY LOOK WORD IS {word}")
     try:
         if word.isnumeric():
             numList = [s for s in re.split(r"\s+|-+", num2words(word))]
             for string in numList:
                 sylCount += get_syl_count(string)
-            print(f"sylCount = {sylCount}")
+            #print(f"sylCount = {sylCount}")
             #this is assigned to avoid calling an exception during recursion
             syl_in_word = True
         else:
@@ -128,7 +128,7 @@ def get_syl_count(word):
 
     except Exception as BreakoutException:
         sylCount = 0
-        print(f"THIS IS THE WEIRD CASE WORD {word}")      
+        #print(f"THIS IS THE WEIRD CASE WORD {word}")      
         if word.lower() in exclusions['exclusions']:
             sylCount = exclusions['exclusions'][word]
         else:
