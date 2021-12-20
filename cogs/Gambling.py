@@ -480,7 +480,7 @@ class Gambling(commands.Cog):
         if (
             self.get_score(self.player) > self.get_score(self.dealer)
         ) and not self.check_edge(self.player):
-            await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'] + self.bet * 2, 
+            await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'] + self.bet, 
             self.author_id, self.guild_id)
             return "WIN"
         elif self.get_score(self.player) == self.get_score(self.dealer):
@@ -498,7 +498,7 @@ class Gambling(commands.Cog):
                 self.embed = self.update_ui(ctx_m, "BLACKJACK\n PUSH", True, color)
                 self.stop_flag = True
             else:
-                await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'] + self.bet * 2.5, 
+                await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'] + self.bet * 2, 
                 self.author_id, self.guild_id)
                 color = discord.Color.default();
                 self.embed = self.update_ui(ctx_m, "YOU HAVE BLACKJACK\n YOU WIN", True, color)
