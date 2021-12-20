@@ -521,7 +521,55 @@ class Gambling(commands.Cog):
             await ctx.send(msg, delete_after=3)
         else:
             raise error
+
+    #STEAL COMMAND (EVIL)
+    # @commands.command()
+    # @commands.bot_has_permissions(manage_messages=True)
+    # @commands.cooldown(1, 86,400, commands.BucketType.user)
+    # async def steal(self, ctx, member: Discord.Member = None):
+    #     """STEAL UWUs FROM OTHER PEOPLE (EVIL)"""
+    #     if not member:
+    #         await ctx.send("Steal from yourself??? Tf???")
+    #         return
+    #     elif member.bot:
+    #         await ctx.send("Bots do not participate in your economy")
+    #         return
+    #     max_uwus = 50000 #Maximum number that the user can steal
+    #     author_id = str(ctx.author.id) 
+    #     guild_id = str(ctx.guild.id)
+    #     member_id = str(member.id)
+
+    #     #Check if user is trying to steal more than the target has or more uwus than allowed
+    #     user = await self.bot.pg_con.fetch("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", member_id, guild_id)
+
         
+    #     #Stop the steal if user has less than lowerlimit UwUs or
+    #     lowerlimit = 3000
+    #     if user[0]['uwus'] < lowerlimit:
+    #         await ctx.send(f"{ctx.member.display_name} has less than {lowerlimit} UwUs and is immune to theft")
+    #         return
+        
+    #     #Chance that a steal is successful
+    #     steal = random.randint(0,10)
+    #     #percent to be stolen
+    #     percentage = math.ceil(100.0 * random.uniform(0.01, 0.05)) / 100.0
+    #     #Lower the chance if target blocks the steal
+    #     Events = self.bot.get_cog("Events")
+    #     steal = random.randint(0, Events.isBlock())
+
+        
+
+
+
+    #     await ctx.send(f"{ctx.author.display_name} has attempted to steal {steal} UwUs from {ctx.member.display_name}! Reply with `_block` to block the steal!")
+
+
+
+
+        
+        
+
+
 
 def setup(bot):
     bot.add_cog(Gambling(bot))
