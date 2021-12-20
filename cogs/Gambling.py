@@ -3,6 +3,7 @@ from discord.ext import commands
 
 import random
 import asyncio
+import math
 
 # def moneyparser(money):
 #     money = str(money)
@@ -236,7 +237,7 @@ class Gambling(commands.Cog):
 
         user = await self.bot.pg_con.fetch("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
         if amount > user[0]['uwus']:
-            await ctx.send(f"You can't sent more than you have")
+            await ctx.send(f"You can't send more than you have")
         
         if(member.bot):
             await ctx.send("You can't send UwUs to bots fuckass")
@@ -505,7 +506,7 @@ class Gambling(commands.Cog):
                 self.stop_flag = True
         elif self.get_score(self.dealer, True) == 21:
             color = discord.Color.red()
-            self.embed = self.update_ui(ctx_m, "MARK HAS BLACKJACK\n YOU LOSE HAHAHA", True, color)
+            self.embed = self.update_ui(ctx_m, "MARK HAS BLACKJACK\n YOU LOSE HAHA", True, color)
             self.stop_flag = True
     
     @blackjack.error
@@ -520,6 +521,7 @@ class Gambling(commands.Cog):
             await ctx.send(msg, delete_after=3)
         else:
             raise error
+        
 
 def setup(bot):
     bot.add_cog(Gambling(bot))
