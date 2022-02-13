@@ -16,11 +16,11 @@ class SocialCredit(commands.Cog):
     async def remove_points(self, author_id: str, guild_id: str, count, message):
         if author_id != self.bot.user:
             user = await self.bot.pg_con.fetch("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
-            num_uwus = user[0]['uwus']
-            if num_uwus <= 0:
-                return
-            if count > num_uwus:
-                count = num_uwus
+            # num_uwus = user[0]['uwus']
+            # if num_uwus <= 0:
+            #     return
+            # if count > num_uwus:
+            #     count = num_uwus
             user = await self.bot.pg_con.fetchrow("SELECT * FROM users WHERE user_id = $1 AND guild_id = $2", author_id, guild_id)
             await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", user['uwus'] - count, author_id, guild_id)
     
