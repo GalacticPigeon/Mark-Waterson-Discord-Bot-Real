@@ -36,6 +36,20 @@ def sanitize_input(message):
 
     return message
 
+#removes every piece of punctuation in the message
+def remove_symbols(message):
+    if (type(message) != 'list'): #If variable type is not a list
+        for symbol in badCharsList:
+            if symbol in message:
+                if symbol.isnumeric():
+                    pass
+                else:
+                    message = message.replace(symbol, symbol + "")
+    else:
+        message = [message.replace(s, s + "") for s in badCharsList]
+
+    return message
+
 def remove_string(lst, message):
     messageList = [s for s in re.split(r"\s+", message)]
     sanitize_input(message)
@@ -66,7 +80,7 @@ def syllables(word):
     return count
 
 
-#List of f o r b i d d e n words
+# #List of f o r b i d d e n words
 with open('badWords.json', 'r') as f:
     badWordsList = json.load(f)
 
@@ -174,6 +188,22 @@ class Events(commands.Cog):
         def middle_char(txt):
             return txt[(len(txt)-1)//2:(len(txt)+2)//2]
         
+        #TAXTAXTAXTAXTAXTAXTAXTAXTAXTAXTAXTAXTAXTAXTAXTAXTAXTAXTAXTAXTAX
+        #Remove all symbols from message
+        word = remove_symbols(message.content.lower())
+        #Check if message has a taxed word
+        with open('tax.json', 'r') as f:
+            taxedWords = json.load(f)
+        if word in taxedWords['taxedWords']:
+            SocialCredit = self.bot.get_cog('SocialCredit')
+            await SocialCredit.remove_points(author_id, guild_id, taxedWords['taxedWords'][word], message)
+            embed = discord.Embed(
+                color = discord.Color.red()
+            )
+            embed.set_author(name='haram')
+            embed.add_field(name=f"\u200b", value=f"You have lost {taxedWords['taxedWords'][word]} UwU(s)", inline=False)
+            await message.channel.send(embed=embed)
+
         uwuCount = 0
         #Find all words that contain w
         ws = [s for s in re.findall(r'\S[Ww]\S', new_message)]
@@ -261,7 +291,7 @@ class Events(commands.Cog):
                 embed.set_footer(text=f"-{message.author.display_name}")
                 await channel.send(embed=embed)
 
-        
+        #Several message checks for phrases for bot to respond to
         for word in badWordsList['badWords']['words']:
             if word in new_message:
                 isBadWords = True
