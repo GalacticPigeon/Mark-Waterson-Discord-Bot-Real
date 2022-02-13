@@ -4,6 +4,7 @@ from discord.ext import commands
 import random
 import asyncio
 import math
+import json
 
 # def moneyparser(money):
 #     money = str(money)
@@ -53,8 +54,6 @@ import math
 #         nmoney = money
 
 #     return int(nmoney)
-
-
 
 def remove_symbol(message):
     #list of chars to remove
@@ -366,7 +365,7 @@ class Gambling(commands.Cog):
             except asyncio.TimeoutError:
                 reaction = self.stand_clicked = True
                 await ctx.channel.send(
-                    f":x: {ctx.author.mention} you took too long, your game has been closed, to start over, enter `{_}blackjack` command"
+                    f":x: {ctx.author.mention} you took too long, your game has been closed, to start over, enter `_blackjack` command"
                 )
             if reaction and self.hit_clicked:
                 self.hit_clicked = False
@@ -494,7 +493,7 @@ class Gambling(commands.Cog):
     async def check_blackjack(self, ctx_m):
         if self.get_score(self.player, True) == 21:
             if self.get_score(self.dealer, True) == 21:
-                await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'], author_id, guild_id)
+                await self.bot.pg_con.execute("UPDATE users SET uwus = $1 WHERE user_id = $2 AND guild_id = $3", self.user['uwus'], self.author_id, self.guild_id)
                 color = discord.Color.greyple()
                 self.embed = self.update_ui(ctx_m, "BLACKJACK\n PUSH", True, color)
                 self.stop_flag = True
@@ -564,7 +563,33 @@ class Gambling(commands.Cog):
     #     await ctx.send(f"{ctx.author.display_name} has attempted to steal {steal} UwUs from {ctx.member.display_name}! Reply with `_block` to block the steal!")
 
 
+    @commands.command()
+    #@commands.has_permissions(kick_members=True)
+    @commands.is_owner()
+    async def tax(self, ctx, word, amount=None):
+        """Moderator only command to tax bad words! usage: `_tax [word or phrase] [amount (whole number)]`"""
+        amount = "1" if not amount else amount
+        author_id = str(ctx.author.id)
+        guild_id = str(ctx.guild.id)
 
+        with open("tax.json", "r+") as f:
+            taxedWords = json.load(f)
+
+        word = str(word).lower()
+        try:
+            if word in taxedWords['taxedWords'] and taxedWords['taxedWords'][word] == amount:
+                await ctx.send("Word already in taxedWords!")
+                return
+
+            taxedWords['taxedWords'][word] = int(amount)
+            with open("tax.json", "w") as f:
+                taxedWords = json.dump(taxedWords, f, indent=4)
+                
+            await ctx.send("Successfully added exception!")
+
+        except Exception as e:
+            await ctx.send("Failed to add word as an exception!")
+            raise e
 
         
         
