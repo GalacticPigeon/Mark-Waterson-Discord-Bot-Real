@@ -194,14 +194,20 @@ class Events(commands.Cog):
         #Check if message has a taxed word
         with open('tax.json', 'r') as f:
             taxedWords = json.load(f)
-        if word in taxedWords['taxedWords']:
+        key_list = list(taxedWords['taxedWords'].keys())
+        found = None
+        found = [s for s in re.findall(r'haram', new_message)]
+        if found:
+            removed: int = int(0)
             SocialCredit = self.bot.get_cog('SocialCredit')
-            await SocialCredit.remove_points(author_id, guild_id, taxedWords['taxedWords'][word], message)
+            for item in found:
+                removed += int(taxedWords['taxedWords'][item])
+                await SocialCredit.remove_points(author_id, guild_id, removed, message)
             embed = discord.Embed(
                 color = discord.Color.red()
             )
             embed.set_author(name='haram')
-            embed.add_field(name=f"\u200b", value=f"You have lost {taxedWords['taxedWords'][word]} UwU(s)", inline=False)
+            embed.add_field(name=f"\u200b", value=f"You have lost {removed} UwU(s)", inline=False)
             await message.channel.send(embed=embed)
 
         uwuCount = 0
