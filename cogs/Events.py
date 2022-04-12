@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 import random
 import json
 import re
@@ -10,11 +10,6 @@ from num2words import num2words
 
 badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
 '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’", "@", "*"]
-
-@tasks.loop(seconds=360)
-async def post_crab():
-    channel =  663127904187842580
-    await channel.send("https://imgur.com/a/XIgoCmn")
 
 def remove_symbol(message):
     #list of chars to remove
