@@ -215,17 +215,6 @@ class Commands(commands.Cog):
             await ctx.send("There are no penises :pensive:")
         else:
             await ctx.send(f"{oldNumber} {units[0]} is approximately {number} human penises!")
-        
-    @commands.command()
-    async def cchannel(self, ctx):
-        #channel = discord.utils.get(ctx.guild.channels, name="memes")
-        id = ctx.message.channel.id
-        await ctx.send(f"CHANNEL ID IS LOOK HERE IT IS {id}")
-
-    @commands.command()
-    async def gguild(self, ctx):
-        id = ctx.message.guild.id
-        await ctx.send(id)
 
 def setup(bot):
     bot.add_cog(Commands(bot))
