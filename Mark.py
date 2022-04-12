@@ -27,7 +27,7 @@ with open('badWords.json', 'r') as f:
 # Prefix for bot command
 client = commands.Bot(command_prefix = '_')
 client.remove_command('help')
-status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently facing east',])
+status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently facing east', 'with blood'])
 #FIXME: COMMENT OUT
 #os.chdir(r'D:\Documents\Discord Bot')
 
@@ -42,12 +42,9 @@ async def create_db_pool():
     except Exception as e:
         raise e
 #Tasks
-@tasks.loop(seconds = 360)
+@tasks.loop(seconds = 600)
 async def change_status():
     await client.change_presence(activity = discord.Game(next(status)))
-    #post crab
-    channel =  client.get_channel(663127904187842580)
-    await channel.send("https://imgur.com/a/XIgoCmn")
 
 #Helper function to filter out symbols in words
 def remove_symbol(message):
