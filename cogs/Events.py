@@ -11,6 +11,11 @@ from num2words import num2words
 badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
 '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’", "@", "*"]
 
+@tasks.loop(seconds=360)
+async def post_crab(ctx):
+    channel =  663127904187842580
+    await channel.send("https://imgur.com/a/XIgoCmn")
+
 def remove_symbol(message):
     #list of chars to remove
     badCharsList = [';', ' ', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{', '}', 
