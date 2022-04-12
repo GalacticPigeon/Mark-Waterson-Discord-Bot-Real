@@ -42,12 +42,10 @@ async def create_db_pool():
     except Exception as e:
         raise e
 #Tasks
-@tasks.loop(seconds = 600)
+@tasks.loop(seconds = 360)
 async def change_status():
     await client.change_presence(activity = discord.Game(next(status)))
-
-@tasks.loop(seconds=5)
-async def post_crab():
+    #post crab
     channel =  client.get_channel(663127904187842580)
     await channel.send("https://imgur.com/a/XIgoCmn")
 
