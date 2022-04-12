@@ -12,7 +12,7 @@ badCharsList = [';', '.', "'", '"', '!', '*', '_', '#', '~', '(', ')', '|', '{',
 '<', '>', '?', "\\", '/', '-', '+', '=', '^', '$', '&', '%' ',', '`', "’", "@", "*"]
 
 @tasks.loop(seconds=360)
-async def post_crab(ctx):
+async def post_crab():
     channel =  663127904187842580
     await channel.send("https://imgur.com/a/XIgoCmn")
 
