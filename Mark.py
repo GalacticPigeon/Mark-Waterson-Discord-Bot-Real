@@ -27,7 +27,7 @@ with open('badWords.json', 'r') as f:
 # Prefix for bot command
 client = commands.Bot(command_prefix = '_')
 client.remove_command('help')
-status = cycle(['Absolute Vibes', 'with your mom lmao', 'Stuff', 'Currently facing east', 'with blood'])
+status = cycle(['with your mom lmao', 'with stuff', 'Currently facing east', 'with blood'])
 #FIXME: COMMENT OUT
 #os.chdir(r'D:\Documents\Discord Bot')
 
