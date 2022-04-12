@@ -46,7 +46,7 @@ async def create_db_pool():
 async def change_status():
     await client.change_presence(activity = discord.Game(next(status)))
 
-@tasks.loop(seconds=360)
+@tasks.loop(seconds=5)
 async def post_crab():
     channel =  client.get_channel(663127904187842580)
     await channel.send("https://imgur.com/a/XIgoCmn")
