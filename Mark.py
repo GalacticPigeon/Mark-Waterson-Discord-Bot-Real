@@ -64,6 +64,7 @@ def remove_symbol(message):
 async def on_ready():
     change_status.start()
     channel = client.get_channel(663124280867028994)
+    #test
     await channel.send("I eat salmon raw in front of the deli clerk while asking them what they think the last thought that went through the fish's mind was before telling them")
     print('Bot is ready!')
 
