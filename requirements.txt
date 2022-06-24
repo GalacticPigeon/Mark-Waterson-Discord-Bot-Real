@@ -5,4 +5,5 @@ async-timeout==4.0.2
 pandas
 asyncpg==0.25.0
 pysyllables==1.0.3
+numpy==1.23.0
 num2words==0.5.10
