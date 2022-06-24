@@ -19,7 +19,7 @@ from itertools import cycle
 from itertools import product
 from itertools import chain
 
-#List of f o r b i d d e n words
+#List of f o r b i d d e n words 
 with open('badWords.json', 'r') as f:
     badWordsList = json.load(f)
 
