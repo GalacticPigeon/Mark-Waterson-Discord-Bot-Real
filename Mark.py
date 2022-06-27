@@ -19,7 +19,7 @@ from itertools import cycle
 from itertools import product
 from itertools import chain
 
-#List of f o r b i d d e n words 
+#List of f o r b i d d e n words
 with open('badWords.json', 'r') as f:
     badWordsList = json.load(f)
 
@@ -36,9 +36,9 @@ async def create_db_pool():
     #await asyncpg.connect("postgres://dhluktlzulnova:89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a@ec2-23-23-36-227.compute-1.amazonaws.com:5432/dao8a0cgglvabc?ssl=true")
     try:
         #client.pg_con = await asyncpg.create_pool(database="testDB", user="postgres", password="Q.sweaty42")
-        client.pg_con = await asyncpg.create_pool(database="dao8a0cgglvabc", user="dhluktlzulnova",
-        password="89f3456ec09daac00209556799f98a896b2055fc02af3c8491db47406b41e86a",
-        host="ec2-23-23-36-227.compute-1.amazonaws.com", ssl="require")
+        client.pg_con = await asyncpg.create_pool(database="dej51fgnfhtcs5", user="ldsvsaugabnjsd",
+        password="f9b7b55147d6414fd3863aed29cf36ac7501c4f99e51e2bd4c878d35ff353e84",
+        host="ec2-23-21-148-60.compute-1.amazonaws.com", ssl="require")
     except Exception as e:
         raise e
 #Tasks
@@ -63,9 +63,6 @@ def remove_symbol(message):
 @client.event
 async def on_ready():
     change_status.start()
-    channel = client.get_channel(663124280867028994)
-    #test
-    await channel.send("I eat salmon raw in front of the deli clerk while asking them what they think the last thought that went through the fish's mind was before telling them")
     print('Bot is ready!')
 
 #Changes user nickname if they try to change name to Mark Waterson
