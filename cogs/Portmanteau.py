@@ -74,7 +74,7 @@ def makepm(stringA, stringB):
 
     # check if both strings have at least 1 vowel
     if not hasVowel(stringA) or not hasVowel(stringB):
-        return
+        return "FAIL: don't have vowels in both strings"
     
     # find all vowels and their positions in each string
     vowels = ['a','e','i','o','u']
@@ -141,7 +141,9 @@ class Portmanteau(commands.Cog):
         #check inputs
         words = message.content.split(" ")
         if len(words) == 2:
-            await message.channel.send(makepm(words[0], words[1]))
+            word = makepm(words[0], words[1])
+            if "FAIL" not in word:
+                await message.channel.send(word)
 
 def setup(bot):
     bot.add_cog(Portmanteau(bot))
