@@ -74,7 +74,7 @@ def makepm(stringA, stringB):
 
     # check if both strings have at least 1 vowel
     if not hasVowel(stringA) or not hasVowel(stringB):
-        return "FAIL: don't have vowels in both strings"
+        return
     
     # find all vowels and their positions in each string
     vowels = ['a','e','i','o','u']
