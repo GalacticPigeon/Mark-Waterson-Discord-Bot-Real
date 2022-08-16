@@ -142,7 +142,7 @@ class Portmanteau(commands.Cog):
         words = message.content.split(" ")
         if len(words) == 2:
             word = makepm(words[0], words[1])
-            if "FAIL" not in word:
+            if "FAIL" not in word and words[0] != words[1]:
                 await message.channel.send(word)
 
 def setup(bot):
