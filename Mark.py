@@ -175,7 +175,7 @@ async def usersay_error(self, ctx, error):
 client.loop.run_until_complete(create_db_pool())
 
 #Main bot key
-client.run('Njk3MTEyMjE5MTYyMjQ3MTc5.XoyiWA.cn02llCxi_bU427lSMva1ZKzACY')
+client.run('Njk3MTEyMjE5MTYyMjQ3MTc5.G-0DGO.z-d8DSpfOZm17I5Fqv9Z2hzhKSTx4qSrpWeuPA')
 
 #Test bot key
 #client.run("NzY4MTI2NzkyMTYxOTUxNzY0.X4770g.hM40q3DunC92e0aPbzMqJe6kvas")
